@@ -33,7 +33,8 @@ import {
   updateAppointmentInDb,
   deleteAppointmentFromDb,
   getSettingsFromDb,
-  updateSettingsInDb
+  updateSettingsInDb,
+  checkAndSeedDatabase
 } from './dbService';
 
 const ScrollToTop = () => {
@@ -112,6 +113,8 @@ const App: React.FC = () => {
   useEffect(() => {
     const loadAllData = async () => {
       try {
+        await checkAndSeedDatabase();
+
         const [projList, postList, testList, apptList, settObj] = await Promise.all([
           getProjectsFromDb(),
           getBlogPostsFromDb(),

@@ -86,14 +86,6 @@ export async function getProjectsFromDb(): Promise<Project[]> {
     querySnapshot.forEach((doc) => {
       list.push(doc.data() as Project);
     });
-
-    if (list.length === 0) {
-      console.log("Seeding projects...");
-      for (const p of INITIAL_PROJECTS) {
-        await setDoc(doc(db, PROJECTS_COLL, p.id), p);
-      }
-      return INITIAL_PROJECTS;
-    }
     return list;
   } catch (error) {
     logFirestoreError(error, OperationType.GET, PROJECTS_COLL);
@@ -127,14 +119,6 @@ export async function getBlogPostsFromDb(): Promise<BlogPost[]> {
     querySnapshot.forEach((doc) => {
       list.push(doc.data() as BlogPost);
     });
-
-    if (list.length === 0) {
-      console.log("Seeding blog posts...");
-      for (const p of INITIAL_POSTS) {
-        await setDoc(doc(db, POSTS_COLL, p.id), p);
-      }
-      return INITIAL_POSTS;
-    }
     return list.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   } catch (error) {
     logFirestoreError(error, OperationType.GET, POSTS_COLL);
@@ -177,14 +161,6 @@ export async function getTestimonialsFromDb(): Promise<Testimonial[]> {
     querySnapshot.forEach((doc) => {
       list.push(doc.data() as Testimonial);
     });
-
-    if (list.length === 0) {
-      console.log("Seeding testimonials...");
-      for (const t of INITIAL_TESTIMONIALS) {
-        await setDoc(doc(db, TESTIMONIALS_COLL, t.id), t);
-      }
-      return INITIAL_TESTIMONIALS;
-    }
     return list;
   } catch (error) {
     logFirestoreError(error, OperationType.GET, TESTIMONIALS_COLL);
@@ -272,11 +248,8 @@ export async function getSettingsFromDb(): Promise<AppSettings> {
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
       return docSnap.data() as AppSettings;
-    } else {
-      console.log("Seeding settings...");
-      await setDoc(docRef, defaultSettings);
-      return defaultSettings;
     }
+    return defaultSettings;
   } catch (error) {
     logFirestoreError(error, OperationType.GET, `${SETTINGS_COLL}/global`);
     return defaultSettings;
@@ -302,5 +275,72 @@ export async function addSubscriberToDb(email: string): Promise<void> {
     });
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, `${SUBSCRIBERS_COLL}/${subDocId}`);
+  }
+}
+
+// Helper to check if database needs seeding, and seed it if so
+export async function checkAndSeedDatabase(): Promise<void> {
+  try {
+    const docRef = doc(db, SETTINGS_COLL, "global");
+    const docSnap = await getDoc(docRef);
+    let isSeeded = false;
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      if (data.isSeeded) {
+        isSeeded = true;
+      }
+    }
+
+    if (!isSeeded) {
+      console.log("Database not seeded. Seeding now...");
+      
+      // 1. Seed projects
+      const projSnap = await getDocs(collection(db, PROJECTS_COLL));
+      if (projSnap.empty) {
+        for (const p of INITIAL_PROJECTS) {
+          await setDoc(doc(db, PROJECTS_COLL, p.id), p);
+        }
+      }
+
+      // 2. Seed blog posts
+      const postSnap = await getDocs(collection(db, POSTS_COLL));
+      if (postSnap.empty) {
+        for (const p of INITIAL_POSTS) {
+          await setDoc(doc(db, POSTS_COLL, p.id), p);
+        }
+      }
+
+      // 3. Seed testimonials
+      const testSnap = await getDocs(collection(db, TESTIMONIALS_COLL));
+      if (testSnap.empty) {
+        for (const t of INITIAL_TESTIMONIALS) {
+          await setDoc(doc(db, TESTIMONIALS_COLL, t.id), t);
+        }
+      }
+
+      // 4. Mark as seeded in settings
+      const defaultSettings = {
+        socialLinks: {
+          facebook: 'https://facebook.com/panda_graphic',
+          instagram: 'https://instagram.com/panda_graphic',
+          whatsapp: '+237 654 491 319'
+        },
+        logoTagline: {
+          fr: "L'excellence visuelle par Victor Gabriel Archange",
+          en: "Visual Excellence by Victor Gabriel Archange",
+          de: "Visuelle Exzellenz von Victor Gabriel Archange"
+        },
+        isSeeded: true
+      };
+      
+      if (docSnap.exists()) {
+        await setDoc(docRef, { ...docSnap.data(), isSeeded: true }, { merge: true });
+      } else {
+        await setDoc(docRef, defaultSettings);
+      }
+      console.log("Database seeding completed successfully.");
+    }
+  } catch (error) {
+    console.warn("Seeding failed or not allowed:", error);
   }
 }

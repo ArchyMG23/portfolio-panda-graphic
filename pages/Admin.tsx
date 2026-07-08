@@ -98,21 +98,103 @@ const Admin: React.FC<AdminProps> = ({
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, target: 'project' | 'blog') => {
+  const compressImage = (file: File, maxWidth = 1000, maxHeight = 1000, quality = 0.75): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target?.result as string;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+
+          // Calculate new dimensions while maintaining aspect ratio
+          if (width > height) {
+            if (width > maxWidth) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width = Math.round((width * maxHeight) / height);
+              height = maxHeight;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            resolve(event.target?.result as string);
+            return;
+          }
+
+          ctx.drawImage(img, 0, 0, width, height);
+          const dataUrl = canvas.toDataURL('image/jpeg', quality);
+          resolve(dataUrl);
+        };
+        img.onerror = () => {
+          resolve(event.target?.result as string);
+        };
+      };
+      reader.onerror = (err) => reject(err);
+    });
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, target: 'project' | 'blog') => {
     const file = e.target.files?.[0];
     if (file) {
       const isVideo = file.type.startsWith('video/');
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        if (target === 'project') {
-          setMediaType(isVideo ? 'video' : 'image');
-          setPreviewMedia(reader.result as string);
-        } else {
-          setBlogMediaType(isVideo ? 'video' : 'image');
-          setBlogMedia(reader.result as string);
+      if (isVideo) {
+        // Enforce 1MB limit for videos due to Firestore document size constraint
+        if (file.size > 1024 * 1024) {
+          alert(lang === 'fr' 
+            ? "Le fichier vidéo est trop volumineux. Veuillez sélectionner une vidéo de moins de 1 Mo pour assurer sa sauvegarde dans la base de données." 
+            : "The video file is too large. Please select a video under 1MB to ensure saving.");
+          if (e.target) e.target.value = '';
+          return;
         }
-      };
-      reader.readAsDataURL(file);
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          if (target === 'project') {
+            setMediaType('video');
+            setPreviewMedia(reader.result as string);
+          } else {
+            setBlogMediaType('video');
+            setBlogMedia(reader.result as string);
+          }
+        };
+        reader.readAsDataURL(file);
+      } else {
+        // Compress image to fit perfectly inside Firestore's 1MB limit
+        try {
+          const compressedBase64 = await compressImage(file);
+          if (target === 'project') {
+            setMediaType('image');
+            setPreviewMedia(compressedBase64);
+          } else {
+            setBlogMediaType('image');
+            setBlogMedia(compressedBase64);
+          }
+        } catch (err) {
+          console.error("Compression error, falling back to original:", err);
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            if (target === 'project') {
+              setMediaType('image');
+              setPreviewMedia(reader.result as string);
+            } else {
+              setBlogMediaType('image');
+              setBlogMedia(reader.result as string);
+            }
+          };
+          reader.readAsDataURL(file);
+        }
+      }
     }
   };
 
