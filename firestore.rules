@@ -24,7 +24,7 @@ service cloud.firestore {
     function isValidProject(data) {
       return data.id is string && data.id.size() <= 100 &&
              data.category is string && data.category.size() <= 100 &&
-             data.image is string && data.image.size() <= 1500000 &&
+             data.image is string &&
              data.mediaType is string && data.mediaType.size() <= 10 &&
              data.title is map &&
              data.description is map &&
@@ -36,7 +36,7 @@ service cloud.firestore {
     function isValidBlogPost(data) {
       return data.id is string && data.id.size() <= 100 &&
              data.date is string && data.date.size() <= 50 &&
-             data.image is string && data.image.size() <= 1500000 &&
+             data.image is string &&
              data.mediaType is string && data.mediaType.size() <= 10 &&
              data.likes is int &&
              data.comments is list &&
