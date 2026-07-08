@@ -155,129 +155,200 @@ const App: React.FC = () => {
 
   const t = TRANSLATIONS[lang];
 
+  const getErrorMessage = (err: unknown) => {
+    if (err instanceof Error) {
+      try {
+        const parsed = JSON.parse(err.message);
+        if (parsed && parsed.error) {
+          return parsed.error;
+        }
+      } catch (e) {
+        // Not a JSON string
+      }
+      return err.message;
+    }
+    return String(err);
+  };
+
   const addProject = async (p: Project) => {
-    setProjects(prev => [...prev, p]);
     try {
       await addProjectToDb(p);
+      setProjects(prev => [...prev, p]);
     } catch (err) {
       console.error("Error adding project to Firestore:", err);
+      alert(lang === 'fr' 
+        ? `Erreur lors de l'enregistrement du projet : ${getErrorMessage(err)}`
+        : `Error saving project: ${getErrorMessage(err)}`);
     }
   };
 
   const deleteProject = async (id: string) => {
+    const originalProjects = [...projects];
     setProjects(prev => prev.filter(p => p.id !== id));
     try {
       await deleteProjectFromDb(id);
     } catch (err) {
       console.error("Error deleting project from Firestore:", err);
+      setProjects(originalProjects);
+      alert(lang === 'fr'
+        ? `Erreur lors de la suppression du projet : ${getErrorMessage(err)}`
+        : `Error deleting project: ${getErrorMessage(err)}`);
     }
   };
   
   const addTestimonial = async (t: Testimonial) => {
-    setTestimonials(prev => [...prev, t]);
     try {
       await addTestimonialToDb(t);
+      setTestimonials(prev => [...prev, t]);
     } catch (err) {
       console.error("Error adding testimonial to Firestore:", err);
+      alert(lang === 'fr'
+        ? `Erreur lors de l'enregistrement du témoignage : ${getErrorMessage(err)}`
+        : `Error saving testimonial: ${getErrorMessage(err)}`);
     }
   };
 
   const deleteTestimonial = async (id: string) => {
+    const originalTestimonials = [...testimonials];
     setTestimonials(prev => prev.filter(test => test.id !== id));
     try {
       await deleteTestimonialFromDb(id);
     } catch (err) {
       console.error("Error deleting testimonial from Firestore:", err);
+      setTestimonials(originalTestimonials);
+      alert(lang === 'fr'
+        ? `Erreur lors de la suppression du témoignage : ${getErrorMessage(err)}`
+        : `Error deleting testimonial: ${getErrorMessage(err)}`);
     }
   };
   
   const addPost = async (p: BlogPost) => {
-    setPosts(prev => [...prev, p]);
     try {
       await addBlogPostToDb(p);
+      setPosts(prev => [...prev, p]);
       
-      await fetch('/api/notify-subscribers', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          postTitle: p.title[lang],
-          postContent: p.content[lang],
-          postUrl: `${window.location.origin}/#/blog`
-        }),
-      });
+      try {
+        await fetch('/api/notify-subscribers', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            postTitle: p.title[lang],
+            postContent: p.content[lang],
+            postUrl: `${window.location.origin}/#/blog`
+          }),
+        });
+      } catch (notifyErr) {
+        console.warn('Notification of subscribers failed:', notifyErr);
+      }
     } catch (error) {
-      console.error('Error notifying subscribers / saving blog post:', error);
+      console.error('Error saving blog post:', error);
+      alert(lang === 'fr'
+        ? `Erreur lors de l'enregistrement de l'article de blog : ${getErrorMessage(error)}`
+        : `Error saving blog post: ${getErrorMessage(error)}`);
     }
   };
 
   const deletePost = async (id: string) => {
+    const originalPosts = [...posts];
     setPosts(prev => prev.filter(p => p.id !== id));
     try {
       await deleteBlogPostFromDb(id);
     } catch (err) {
       console.error("Error deleting blog post from Firestore:", err);
+      setPosts(originalPosts);
+      alert(lang === 'fr'
+        ? `Erreur lors de la suppression de l'article : ${getErrorMessage(err)}`
+        : `Error deleting blog post: ${getErrorMessage(err)}`);
     }
   };
 
   const updatePost = async (updatedPost: BlogPost) => {
+    const originalPosts = [...posts];
     setPosts(prev => prev.map(p => p.id === updatedPost.id ? updatedPost : p));
     try {
       await updateBlogPostInDb(updatedPost);
     } catch (err) {
       console.error("Error updating blog post in Firestore:", err);
+      setPosts(originalPosts);
+      alert(lang === 'fr'
+        ? `Erreur lors de la mise à jour de l'article : ${getErrorMessage(err)}`
+        : `Error updating blog post: ${getErrorMessage(err)}`);
     }
   };
 
   const addAppointment = async (a: Appointment) => {
-    setAppointments(prev => [...prev, a]);
     try {
       await addAppointmentToDb(a);
+      setAppointments(prev => [...prev, a]);
       
-      const response = await fetch('/api/appointments', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(a),
-      });
+      try {
+        const response = await fetch('/api/appointments', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(a),
+        });
 
-      if (response.ok) {
-        const result = await response.json();
-        console.log('Notification status:', result.message);
+        if (response.ok) {
+          const result = await response.json();
+          console.log('Notification status:', result.message);
+        }
+      } catch (notifyErr) {
+        console.warn('Appointment notification email failed:', notifyErr);
       }
     } catch (error) {
-      console.error('Error saving appointment / notifying:', error);
+      console.error('Error saving appointment:', error);
+      alert(lang === 'fr'
+        ? `Erreur lors de l'enregistrement du rendez-vous : ${getErrorMessage(error)}`
+        : `Error saving appointment: ${getErrorMessage(error)}`);
     }
   };
 
   const updateAppointment = async (updated: Appointment) => {
+    const originalAppointments = [...appointments];
     setAppointments(prev => prev.map(a => a.id === updated.id ? updated : a));
     try {
       await updateAppointmentInDb(updated);
       console.log(`Update notification sent to ${updated.email}`);
     } catch (err) {
       console.error("Error updating appointment in Firestore:", err);
+      setAppointments(originalAppointments);
+      alert(lang === 'fr'
+        ? `Erreur lors de la modification du rendez-vous : ${getErrorMessage(err)}`
+        : `Error updating appointment: ${getErrorMessage(err)}`);
     }
   };
 
   const deleteAppointment = async (id: string) => {
+    const originalAppointments = [...appointments];
     setAppointments(prev => prev.filter(a => a.id !== id));
     try {
       await deleteAppointmentFromDb(id);
     } catch (err) {
       console.error("Error deleting appointment from Firestore:", err);
+      setAppointments(originalAppointments);
+      alert(lang === 'fr'
+        ? `Erreur lors de la suppression du rendez-vous : ${getErrorMessage(err)}`
+        : `Error deleting appointment: ${getErrorMessage(err)}`);
     }
   };
 
   const updateSettings = async (newSettings: AppSettings) => {
+    const originalSettings = { ...settings };
     setSettings(newSettings);
     localStorage.setItem('appSettings', JSON.stringify(newSettings));
     try {
       await updateSettingsInDb(newSettings);
     } catch (err) {
       console.error("Error updating settings in Firestore:", err);
+      setSettings(originalSettings);
+      localStorage.setItem('appSettings', JSON.stringify(originalSettings));
+      alert(lang === 'fr'
+        ? `Erreur lors de la modification des paramètres : ${getErrorMessage(err)}`
+        : `Error updating settings: ${getErrorMessage(err)}`);
     }
   };
 

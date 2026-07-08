@@ -149,11 +149,11 @@ const Admin: React.FC<AdminProps> = ({
     if (file) {
       const isVideo = file.type.startsWith('video/');
       if (isVideo) {
-        // Enforce 1MB limit for videos due to Firestore document size constraint
-        if (file.size > 1024 * 1024) {
+        // Enforce 600KB limit for videos due to Firestore document size constraint
+        if (file.size > 600 * 1024) {
           alert(lang === 'fr' 
-            ? "Le fichier vidéo est trop volumineux. Veuillez sélectionner une vidéo de moins de 1 Mo pour assurer sa sauvegarde dans la base de données." 
-            : "The video file is too large. Please select a video under 1MB to ensure saving.");
+            ? "Le fichier vidéo est trop volumineux. Veuillez sélectionner une vidéo de moins de 600 Ko pour assurer sa sauvegarde dans la base de données." 
+            : "The video file is too large. Please select a video under 600KB to ensure saving.");
           if (e.target) e.target.value = '';
           return;
         }
