@@ -61,6 +61,23 @@ function handleFirestoreError(error: unknown, operationType: OperationType, path
   throw new Error(JSON.stringify(errInfo));
 }
 
+function logFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
+  const errInfo: FirestoreErrorInfo = {
+    error: error instanceof Error ? error.message : String(error),
+    authInfo: {
+      userId: null,
+      email: null,
+      emailVerified: null,
+      isAnonymous: null,
+      tenantId: null,
+      providerInfo: []
+    },
+    operationType,
+    path
+  };
+  console.warn('Firestore Non-Blocking Error: ', JSON.stringify(errInfo));
+}
+
 // Utility to fetch all projects
 export async function getProjectsFromDb(): Promise<Project[]> {
   try {
@@ -79,7 +96,7 @@ export async function getProjectsFromDb(): Promise<Project[]> {
     }
     return list;
   } catch (error) {
-    handleFirestoreError(error, OperationType.GET, PROJECTS_COLL);
+    logFirestoreError(error, OperationType.GET, PROJECTS_COLL);
     return INITIAL_PROJECTS;
   }
 }
@@ -120,7 +137,7 @@ export async function getBlogPostsFromDb(): Promise<BlogPost[]> {
     }
     return list.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   } catch (error) {
-    handleFirestoreError(error, OperationType.GET, POSTS_COLL);
+    logFirestoreError(error, OperationType.GET, POSTS_COLL);
     return INITIAL_POSTS;
   }
 }
@@ -170,7 +187,7 @@ export async function getTestimonialsFromDb(): Promise<Testimonial[]> {
     }
     return list;
   } catch (error) {
-    handleFirestoreError(error, OperationType.GET, TESTIMONIALS_COLL);
+    logFirestoreError(error, OperationType.GET, TESTIMONIALS_COLL);
     return INITIAL_TESTIMONIALS;
   }
 }
@@ -203,7 +220,7 @@ export async function getAppointmentsFromDb(): Promise<Appointment[]> {
     });
     return list;
   } catch (error) {
-    handleFirestoreError(error, OperationType.GET, APPOINTMENTS_COLL);
+    logFirestoreError(error, OperationType.GET, APPOINTMENTS_COLL);
     return [];
   }
 }
@@ -261,7 +278,7 @@ export async function getSettingsFromDb(): Promise<AppSettings> {
       return defaultSettings;
     }
   } catch (error) {
-    handleFirestoreError(error, OperationType.GET, `${SETTINGS_COLL}/global`);
+    logFirestoreError(error, OperationType.GET, `${SETTINGS_COLL}/global`);
     return defaultSettings;
   }
 }
