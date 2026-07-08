@@ -17,6 +17,24 @@ import About from './pages/About';
 import Blog from './pages/Blog';
 import Contact from './pages/Contact';
 import Admin from './pages/Admin';
+import {
+  getProjectsFromDb,
+  addProjectToDb,
+  deleteProjectFromDb,
+  getBlogPostsFromDb,
+  addBlogPostToDb,
+  updateBlogPostInDb,
+  deleteBlogPostFromDb,
+  getTestimonialsFromDb,
+  addTestimonialToDb,
+  deleteTestimonialFromDb,
+  getAppointmentsFromDb,
+  addAppointmentToDb,
+  updateAppointmentInDb,
+  deleteAppointmentFromDb,
+  getSettingsFromDb,
+  updateSettingsInDb
+} from './dbService';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -75,39 +93,43 @@ const App: React.FC = () => {
   const [posts, setPosts] = useState<BlogPost[]>(INITIAL_POSTS);
   const [testimonials, setTestimonials] = useState<Testimonial[]>(INITIAL_TESTIMONIALS);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [settings, setSettings] = useState<AppSettings>(() => {
-    const saved = localStorage.getItem('appSettings');
-    if (saved) return JSON.parse(saved);
-    return {
-      socialLinks: {
-        facebook: 'https://facebook.com/panda_graphic',
-        instagram: 'https://instagram.com/panda_graphic',
-        whatsapp: '+237 654 491 319'
-      },
-      logoTagline: {
-        fr: 'L\'excellence visuelle par Victor Gabriel Archange',
-        en: 'Visual Excellence by Victor Gabriel Archange',
-        de: 'Visuelle Exzellenz von Victor Gabriel Archange'
-      }
-    };
+  const [settings, setSettings] = useState<AppSettings>({
+    socialLinks: {
+      facebook: 'https://facebook.com/panda_graphic',
+      instagram: 'https://instagram.com/panda_graphic',
+      whatsapp: '+237 654 491 319'
+    },
+    logoTagline: {
+      fr: 'L\'excellence visuelle par Victor Gabriel Archange',
+      en: 'Visual Excellence by Victor Gabriel Archange',
+      de: 'Visuelle Exzellenz von Victor Gabriel Archange'
+    }
   });
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const fetchAppointments = async () => {
+    const loadAllData = async () => {
       try {
-        const response = await fetch('/api/appointments');
-        if (response.ok) {
-          const data = await response.json();
-          setAppointments(data);
-        }
+        const [projList, postList, testList, apptList, settObj] = await Promise.all([
+          getProjectsFromDb(),
+          getBlogPostsFromDb(),
+          getTestimonialsFromDb(),
+          getAppointmentsFromDb(),
+          getSettingsFromDb()
+        ]);
+        
+        setProjects(projList);
+        setPosts(postList);
+        setTestimonials(testList);
+        setAppointments(apptList);
+        setSettings(settObj);
       } catch (error) {
-        console.error('Error fetching appointments:', error);
+        console.error("Error loading data from Firestore:", error);
       }
     };
-    fetchAppointments();
+    loadAllData();
   }, []);
 
   useEffect(() => {
@@ -130,16 +152,47 @@ const App: React.FC = () => {
 
   const t = TRANSLATIONS[lang];
 
-  const addProject = (p: Project) => setProjects([...projects, p]);
-  const deleteProject = (id: string) => setProjects(projects.filter(p => p.id !== id));
+  const addProject = async (p: Project) => {
+    setProjects(prev => [...prev, p]);
+    try {
+      await addProjectToDb(p);
+    } catch (err) {
+      console.error("Error adding project to Firestore:", err);
+    }
+  };
+
+  const deleteProject = async (id: string) => {
+    setProjects(prev => prev.filter(p => p.id !== id));
+    try {
+      await deleteProjectFromDb(id);
+    } catch (err) {
+      console.error("Error deleting project from Firestore:", err);
+    }
+  };
   
-  const addTestimonial = (t: Testimonial) => setTestimonials([...testimonials, t]);
-  const deleteTestimonial = (id: string) => setTestimonials(testimonials.filter(test => test.id !== id));
+  const addTestimonial = async (t: Testimonial) => {
+    setTestimonials(prev => [...prev, t]);
+    try {
+      await addTestimonialToDb(t);
+    } catch (err) {
+      console.error("Error adding testimonial to Firestore:", err);
+    }
+  };
+
+  const deleteTestimonial = async (id: string) => {
+    setTestimonials(prev => prev.filter(test => test.id !== id));
+    try {
+      await deleteTestimonialFromDb(id);
+    } catch (err) {
+      console.error("Error deleting testimonial from Firestore:", err);
+    }
+  };
   
   const addPost = async (p: BlogPost) => {
-    setPosts([...posts, p]);
-    
+    setPosts(prev => [...prev, p]);
     try {
+      await addBlogPostToDb(p);
+      
       await fetch('/api/notify-subscribers', {
         method: 'POST',
         headers: {
@@ -152,18 +205,33 @@ const App: React.FC = () => {
         }),
       });
     } catch (error) {
-      console.error('Error notifying subscribers:', error);
+      console.error('Error notifying subscribers / saving blog post:', error);
     }
   };
-  const deletePost = (id: string) => setPosts(posts.filter(p => p.id !== id));
-  const updatePost = (updatedPost: BlogPost) => {
-    setPosts(posts.map(p => p.id === updatedPost.id ? updatedPost : p));
+
+  const deletePost = async (id: string) => {
+    setPosts(prev => prev.filter(p => p.id !== id));
+    try {
+      await deleteBlogPostFromDb(id);
+    } catch (err) {
+      console.error("Error deleting blog post from Firestore:", err);
+    }
+  };
+
+  const updatePost = async (updatedPost: BlogPost) => {
+    setPosts(prev => prev.map(p => p.id === updatedPost.id ? updatedPost : p));
+    try {
+      await updateBlogPostInDb(updatedPost);
+    } catch (err) {
+      console.error("Error updating blog post in Firestore:", err);
+    }
   };
 
   const addAppointment = async (a: Appointment) => {
-    setAppointments([...appointments, a]);
-    
+    setAppointments(prev => [...prev, a]);
     try {
+      await addAppointmentToDb(a);
+      
       const response = await fetch('/api/appointments', {
         method: 'POST',
         headers: {
@@ -172,30 +240,42 @@ const App: React.FC = () => {
         body: JSON.stringify(a),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to send email notification');
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Notification status:', result.message);
       }
-
-      const result = await response.json();
-      console.log('Notification status:', result.message);
     } catch (error) {
-      console.error('Error sending notification:', error);
+      console.error('Error saving appointment / notifying:', error);
     }
   };
 
-  const updateAppointment = (updated: Appointment) => {
-    setAppointments(appointments.map(a => a.id === updated.id ? updated : a));
-    // Logic for email notification on update
-    console.log(`Update notification sent to ${updated.email}`);
+  const updateAppointment = async (updated: Appointment) => {
+    setAppointments(prev => prev.map(a => a.id === updated.id ? updated : a));
+    try {
+      await updateAppointmentInDb(updated);
+      console.log(`Update notification sent to ${updated.email}`);
+    } catch (err) {
+      console.error("Error updating appointment in Firestore:", err);
+    }
   };
 
-  const deleteAppointment = (id: string) => {
-    setAppointments(appointments.filter(a => a.id !== id));
+  const deleteAppointment = async (id: string) => {
+    setAppointments(prev => prev.filter(a => a.id !== id));
+    try {
+      await deleteAppointmentFromDb(id);
+    } catch (err) {
+      console.error("Error deleting appointment from Firestore:", err);
+    }
   };
 
-  const updateSettings = (newSettings: AppSettings) => {
+  const updateSettings = async (newSettings: AppSettings) => {
     setSettings(newSettings);
     localStorage.setItem('appSettings', JSON.stringify(newSettings));
+    try {
+      await updateSettingsInDb(newSettings);
+    } catch (err) {
+      console.error("Error updating settings in Firestore:", err);
+    }
   };
 
   const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');

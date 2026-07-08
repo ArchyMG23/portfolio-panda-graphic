@@ -1,0 +1,113 @@
+{
+  "entities": {
+    "Project": {
+      "title": "Project",
+      "description": "Graphic design portfolio project",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "object" },
+        "category": { "type": "string" },
+        "image": { "type": "string" },
+        "mediaType": { "type": "string" },
+        "description": { "type": "object" },
+        "problem": { "type": "object" },
+        "solution": { "type": "object" },
+        "caseStudy": { "type": "object" }
+      },
+      "required": ["id", "title", "category", "image", "mediaType"]
+    },
+    "BlogPost": {
+      "title": "BlogPost",
+      "description": "Blog post with localized content and media",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "object" },
+        "content": { "type": "object" },
+        "date": { "type": "string" },
+        "image": { "type": "string" },
+        "mediaType": { "type": "string" },
+        "likes": { "type": "number" },
+        "comments": { "type": "array" }
+      },
+      "required": ["id", "title", "content", "date", "image", "mediaType", "likes", "comments"]
+    },
+    "Testimonial": {
+      "title": "Testimonial",
+      "description": "Client testimonial",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "role": { "type": "object" },
+        "content": { "type": "object" },
+        "project": { "type": "object" },
+        "avatar": { "type": "string" }
+      },
+      "required": ["id", "name", "role", "content"]
+    },
+    "Appointment": {
+      "title": "Appointment",
+      "description": "Booking/meeting appointment",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "date": { "type": "string" },
+        "time": { "type": "string" },
+        "description": { "type": "string" },
+        "services": { "type": "array" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "name", "email", "date", "services", "status"]
+    },
+    "AppSettings": {
+      "title": "AppSettings",
+      "description": "Global application settings and social links",
+      "type": "object",
+      "properties": {
+        "socialLinks": { "type": "object" },
+        "logoTagline": { "type": "object" }
+      },
+      "required": ["socialLinks", "logoTagline"]
+    },
+    "Subscriber": {
+      "title": "Subscriber",
+      "description": "Newsletter subscriber",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "subscribedAt": { "type": "string" }
+      },
+      "required": ["email", "subscribedAt"]
+    }
+  },
+  "firestore": {
+    "projects/{id}": {
+      "schema": "Project",
+      "description": "Graphic design portfolio projects"
+    },
+    "posts/{id}": {
+      "schema": "BlogPost",
+      "description": "Blog posts with media, likes and comments"
+    },
+    "testimonials/{id}": {
+      "schema": "Testimonial",
+      "description": "Client testimonials and reviews"
+    },
+    "appointments/{id}": {
+      "schema": "Appointment",
+      "description": "Appointment requests submitted by clients"
+    },
+    "settings/{id}": {
+      "schema": "AppSettings",
+      "description": "Global settings for social links and slogans"
+    },
+    "subscribers/{id}": {
+      "schema": "Subscriber",
+      "description": "Newsletter email subscriptions"
+    }
+  }
+}

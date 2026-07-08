@@ -1,0 +1,114 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helpers
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Validation Blueprints
+    function isValidProject(data) {
+      return data.id is string && data.id.size() <= 100 &&
+             data.category is string && data.category.size() <= 100 &&
+             data.image is string && data.image.size() <= 2048 &&
+             data.mediaType is string && data.mediaType.size() <= 10 &&
+             data.title is map &&
+             data.description is map &&
+             data.problem is map &&
+             data.solution is map &&
+             data.caseStudy is map;
+    }
+
+    function isValidBlogPost(data) {
+      return data.id is string && data.id.size() <= 100 &&
+             data.date is string && data.date.size() <= 50 &&
+             data.image is string && data.image.size() <= 2048 &&
+             data.mediaType is string && data.mediaType.size() <= 10 &&
+             data.likes is int &&
+             data.comments is list &&
+             data.title is map &&
+             data.content is map;
+    }
+
+    function isValidTestimonial(data) {
+      return data.id is string && data.id.size() <= 100 &&
+             data.name is string && data.name.size() <= 100 &&
+             data.role is map &&
+             data.content is map;
+    }
+
+    function isValidAppointment(data) {
+      return data.id is string && data.id.size() <= 100 &&
+             data.name is string && data.name.size() <= 100 &&
+             data.email is string && data.email.size() <= 200 &&
+             data.date is string && data.date.size() <= 50 &&
+             data.services is list &&
+             data.status is string && data.status.size() <= 20;
+    }
+
+    function isValidAppSettings(data) {
+      return data.socialLinks is map &&
+             data.logoTagline is map;
+    }
+
+    function isValidSubscriber(data) {
+      return data.email is string && data.email.size() <= 200 &&
+             data.subscribedAt is string && data.subscribedAt.size() <= 50;
+    }
+
+    // Rules for each collection
+    match /projects/{projectId} {
+      allow read: if true;
+      allow create: if isValidId(projectId) && isValidProject(incoming());
+      allow update: if isValidId(projectId) && isValidProject(incoming());
+      allow delete: if isValidId(projectId);
+    }
+
+    match /posts/{postId} {
+      allow read: if true;
+      allow create: if isValidId(postId) && isValidBlogPost(incoming());
+      allow update: if isValidId(postId) && isValidBlogPost(incoming());
+      allow delete: if isValidId(postId);
+    }
+
+    match /testimonials/{testimonialId} {
+      allow read: if true;
+      allow create: if isValidId(testimonialId) && isValidTestimonial(incoming());
+      allow update: if isValidId(testimonialId) && isValidTestimonial(incoming());
+      allow delete: if isValidId(testimonialId);
+    }
+
+    match /appointments/{appointmentId} {
+      allow read: if true;
+      allow create: if isValidId(appointmentId) && isValidAppointment(incoming());
+      allow update: if isValidId(appointmentId) && isValidAppointment(incoming());
+      allow delete: if isValidId(appointmentId);
+    }
+
+    match /settings/{settingId} {
+      allow read: if true;
+      allow create, update: if isValidId(settingId) && isValidAppSettings(incoming());
+      allow delete: if isValidId(settingId);
+    }
+
+    match /subscribers/{subscriberId} {
+      allow read: if true;
+      allow create, update: if isValidId(subscriberId) && isValidSubscriber(incoming());
+      allow delete: if isValidId(subscriberId);
+    }
+  }
+}

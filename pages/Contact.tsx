@@ -9,6 +9,7 @@ import {
 import { Language, Appointment, AppSettings } from '../types';
 import { TRANSLATIONS } from '../constants';
 import { motion, AnimatePresence } from 'framer-motion';
+import { addSubscriberToDb } from '../dbService';
 
 interface ContactProps {
   lang: Language;
@@ -150,6 +151,8 @@ const Contact: React.FC<ContactProps> = ({ lang, onAddAppointment, appointments,
   const handleSubscribe = async () => {
     if (!newsEmail) return;
     try {
+      await addSubscriberToDb(newsEmail);
+      
       const response = await fetch('/api/subscribe', {
         method: 'POST',
         headers: {
@@ -157,6 +160,7 @@ const Contact: React.FC<ContactProps> = ({ lang, onAddAppointment, appointments,
         },
         body: JSON.stringify({ email: newsEmail }),
       });
+      
       if (response.ok) {
         alert(t.booking.thanksSubscribe);
         setNewsEmail('');
