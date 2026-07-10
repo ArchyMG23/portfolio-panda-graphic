@@ -6,7 +6,7 @@ import {
   Image as ImageIcon, CheckCircle2, ArrowUpRight, 
   PenTool, Sparkles, Zap, MessageSquare, ArrowRight
 } from 'lucide-react';
-import { Language } from '../types';
+import { Language, AppSettings } from '../types';
 import { TRANSLATIONS } from '../constants';
 
 interface FloatingText {
@@ -16,10 +16,19 @@ interface FloatingText {
   y: number;
 }
 
-const Services: React.FC<{ lang: Language }> = ({ lang }) => {
+const Services: React.FC<{ lang: Language; settings?: AppSettings }> = ({ lang, settings }) => {
   const t = TRANSLATIONS[lang];
   const navigate = useNavigate();
   const [floatingText, setFloatingText] = useState<FloatingText | null>(null);
+
+  // Dynamic header variables with fallback to static translations
+  const title = settings?.services?.title?.[lang] || t.services.title;
+  const headerDesc = settings?.services?.headerDesc?.[lang] || t.services.headerDesc;
+
+  // Split title dynamically
+  const titleWords = title.split(' ');
+  const titleMain = titleWords[0];
+  const titleAccent = titleWords.slice(1).join(' ');
 
   const serviceList = [
     {
@@ -119,10 +128,10 @@ const Services: React.FC<{ lang: Language }> = ({ lang }) => {
           {t.services.headerTag}
         </div>
         <h1 className="text-4xl sm:text-6xl md:text-8xl font-display font-bold tracking-tighter mb-6 sm:mb-8 uppercase leading-none text-panda-black dark:text-panda-white">
-          {t.services.title.split(' ')[0]} <span className="text-panda-gold">{t.services.title.split(' ').slice(1).join(' ')}</span>
+          {titleMain} {titleAccent && <span className="text-panda-gold">{titleAccent}</span>}
         </h1>
-        <p className="text-2xl text-panda-black/80 dark:text-panda-white/80 max-w-3xl font-light leading-relaxed">
-          {t.services.headerDesc}
+        <p className="text-2xl text-panda-black/80 dark:text-panda-white/80 max-w-3xl font-light leading-relaxed font-sans">
+          {headerDesc}
         </p>
       </header>
 

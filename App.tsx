@@ -533,11 +533,22 @@ const App: React.FC = () => {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed inset-0 z-40 bg-white/95 dark:bg-panda-black/95 backdrop-blur-2xl flex flex-col items-center justify-center space-y-8 md:hidden text-panda-black dark:text-panda-white"
+              className="fixed inset-0 z-[60] bg-white/98 dark:bg-panda-black/98 backdrop-blur-3xl flex flex-col items-center justify-center space-y-8 md:hidden text-panda-black dark:text-panda-white"
             >
-              <div className="absolute top-20 right-6">
-                <button onClick={() => setIsMenuOpen(false)} className="p-4 bg-panda-black/5 dark:bg-panda-white/5 rounded-full text-panda-gold">
-                  <X size={32} />
+              {/* Aligned Mobile Drawer Header */}
+              <div className="absolute top-0 left-0 right-0 p-6 flex items-center justify-between border-b border-panda-black/5 dark:border-panda-white/5">
+                <Link to="/" className="flex items-center space-x-2" onClick={() => setIsMenuOpen(false)}>
+                  <div className="w-10 h-10 bg-panda-gold rounded-full flex items-center justify-center text-panda-black font-black text-xl">P</div>
+                  <div className="flex flex-col">
+                    <span className="font-display text-xl font-bold tracking-tighter text-panda-black dark:text-panda-white leading-none">PANDA<span className="text-panda-gold">_</span>GRAPHIC</span>
+                    <span className="text-[8px] uppercase tracking-widest text-panda-black/40 dark:text-panda-white/40 font-bold mt-1 max-w-[150px] truncate">{settings.logoTagline[lang]}</span>
+                  </div>
+                </Link>
+                <button 
+                  onClick={() => setIsMenuOpen(false)} 
+                  className="p-3 bg-panda-black/5 dark:bg-panda-white/5 rounded-full text-panda-black dark:text-panda-white border border-panda-black/10 dark:border-panda-white/10 hover:border-panda-gold hover:text-panda-gold transition-all"
+                >
+                  <X size={24} />
                 </button>
               </div>
               {Object.entries(t.nav).map(([key, label], i) => (
@@ -587,8 +598,8 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/" element={<Home lang={lang} projects={projects} posts={posts} testimonials={testimonials} />} />
             <Route path="/portfolio" element={<Portfolio lang={lang} projects={projects} />} />
-            <Route path="/services" element={<Services lang={lang} />} />
-            <Route path="/about" element={<About lang={lang} />} />
+            <Route path="/services" element={<Services lang={lang} settings={settings} />} />
+            <Route path="/about" element={<About lang={lang} settings={settings} />} />
             <Route path="/blog" element={<Blog lang={lang} posts={posts} onUpdatePost={updatePost} isAdmin={isAdmin} />} />
             <Route path="/contact" element={<Contact lang={lang} onAddAppointment={addAppointment} appointments={appointments} settings={settings} />} />
             <Route path="/admin" element={

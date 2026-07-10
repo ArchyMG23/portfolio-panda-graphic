@@ -54,6 +54,31 @@ const Admin: React.FC<AdminProps> = ({
   const [taglineEn, setTaglineEn] = useState(settings.logoTagline.en);
   const [taglineDe, setTaglineDe] = useState(settings.logoTagline.de);
 
+  // Dynamic About settings states
+  const [aboutImage, setAboutImage] = useState(settings.about?.image || "https://picsum.photos/seed/victor/800/1000");
+  const [aboutTitleFr, setAboutTitleFr] = useState(settings.about?.title?.fr || TRANSLATIONS.fr.about.title);
+  const [aboutTitleEn, setAboutTitleEn] = useState(settings.about?.title?.en || TRANSLATIONS.en.about.title);
+  const [aboutTitleDe, setAboutTitleDe] = useState(settings.about?.title?.de || TRANSLATIONS.de.about.title);
+  const [aboutBioFr, setAboutBioFr] = useState(settings.about?.bio?.fr || TRANSLATIONS.fr.about.bio);
+  const [aboutBioEn, setAboutBioEn] = useState(settings.about?.bio?.en || TRANSLATIONS.en.about.bio);
+  const [aboutBioDe, setAboutBioDe] = useState(settings.about?.bio?.de || TRANSLATIONS.de.about.bio);
+  const [aboutPseudonymFr, setAboutPseudonymFr] = useState(settings.about?.pseudonym?.fr || TRANSLATIONS.fr.about.pseudonym);
+  const [aboutPseudonymEn, setAboutPseudonymEn] = useState(settings.about?.pseudonym?.en || TRANSLATIONS.en.about.pseudonym);
+  const [aboutPseudonymDe, setAboutPseudonymDe] = useState(settings.about?.pseudonym?.de || TRANSLATIONS.de.about.pseudonym);
+  const [aboutQuoteFr, setAboutQuoteFr] = useState(settings.about?.quote?.fr || TRANSLATIONS.fr.about.quote);
+  const [aboutQuoteEn, setAboutQuoteEn] = useState(settings.about?.quote?.en || TRANSLATIONS.en.about.quote);
+  const [aboutQuoteDe, setAboutQuoteDe] = useState(settings.about?.quote?.de || TRANSLATIONS.de.about.quote);
+
+  // Dynamic Services settings states
+  const [servicesTitleFr, setServicesTitleFr] = useState(settings.services?.title?.fr || TRANSLATIONS.fr.services.title);
+  const [servicesTitleEn, setServicesTitleEn] = useState(settings.services?.title?.en || TRANSLATIONS.en.services.title);
+  const [servicesTitleDe, setServicesTitleDe] = useState(settings.services?.title?.de || TRANSLATIONS.de.services.title);
+  const [servicesDescFr, setServicesDescFr] = useState(settings.services?.headerDesc?.fr || TRANSLATIONS.fr.services.headerDesc);
+  const [servicesDescEn, setServicesDescEn] = useState(settings.services?.headerDesc?.en || TRANSLATIONS.en.services.headerDesc);
+  const [servicesDescDe, setServicesDescDe] = useState(settings.services?.headerDesc?.de || TRANSLATIONS.de.services.headerDesc);
+
+  const aboutFileInputRef = useRef<HTMLInputElement>(null);
+
   // Appointment edit states
   const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null);
   const [editDate, setEditDate] = useState('');
@@ -150,16 +175,16 @@ const Admin: React.FC<AdminProps> = ({
     });
   };
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, target: 'project' | 'blog') => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, target: 'project' | 'blog' | 'about') => {
     const file = e.target.files?.[0];
     if (file) {
       const isVideo = file.type.startsWith('video/');
       if (isVideo) {
-        // Enforce 600KB limit for videos due to Firestore document size constraint
-        if (file.size > 600 * 1024) {
+        // Enforce 400KB limit for videos due to Firestore document size constraint
+        if (file.size > 400 * 1024) {
           alert(lang === 'fr' 
-            ? "Le fichier vidéo est trop volumineux. Veuillez sélectionner une vidéo de moins de 600 Ko pour assurer sa sauvegarde dans la base de données." 
-            : "The video file is too large. Please select a video under 600KB to ensure saving.");
+            ? "Le fichier vidéo est trop volumineux. Veuillez sélectionner une vidéo de moins de 400 Ko pour assurer sa sauvegarde dans la base de données." 
+            : "The video file is too large. Please select a video under 400KB to ensure saving.");
           if (e.target) e.target.value = '';
           return;
         }
@@ -169,7 +194,7 @@ const Admin: React.FC<AdminProps> = ({
           if (target === 'project') {
             setMediaType('video');
             setPreviewMedia(reader.result as string);
-          } else {
+          } else if (target === 'blog') {
             setBlogMediaType('video');
             setBlogMedia(reader.result as string);
           }
@@ -178,13 +203,15 @@ const Admin: React.FC<AdminProps> = ({
       } else {
         // Compress image to fit perfectly inside Firestore's 1MB limit
         try {
-          const compressedBase64 = await compressImage(file);
+          const compressedBase64 = await compressImage(file, 800, 800, 0.65);
           if (target === 'project') {
             setMediaType('image');
             setPreviewMedia(compressedBase64);
-          } else {
+          } else if (target === 'blog') {
             setBlogMediaType('image');
             setBlogMedia(compressedBase64);
+          } else if (target === 'about') {
+            setAboutImage(compressedBase64);
           }
         } catch (err) {
           console.error("Compression error, falling back to original:", err);
@@ -193,9 +220,11 @@ const Admin: React.FC<AdminProps> = ({
             if (target === 'project') {
               setMediaType('image');
               setPreviewMedia(reader.result as string);
-            } else {
+            } else if (target === 'blog') {
               setBlogMediaType('image');
               setBlogMedia(reader.result as string);
+            } else if (target === 'about') {
+              setAboutImage(reader.result as string);
             }
           };
           reader.readAsDataURL(file);
@@ -244,10 +273,10 @@ const Admin: React.FC<AdminProps> = ({
         const isVideo = file.type.startsWith('video/');
         
         if (isVideo) {
-          if (file.size > 600 * 1024) {
+          if (file.size > 300 * 1024) {
             alert(lang === 'fr' 
-              ? `Le fichier vidéo "${file.name}" est trop volumineux (max 600 Ko).`
-              : `The video file "${file.name}" is too large (max 600KB).`);
+              ? `Le fichier vidéo "${file.name}" est trop volumineux pour la galerie (max 300 Ko).`
+              : `The video file "${file.name}" is too large for the gallery (max 300KB).`);
             continue;
           }
           
@@ -260,7 +289,7 @@ const Admin: React.FC<AdminProps> = ({
           newItems.push({ url: dataUrl, type: 'video' });
         } else {
           try {
-            const compressed = await compressImage(file, 800, 800, 0.6);
+            const compressed = await compressImage(file, 640, 640, 0.55);
             newItems.push({ url: compressed, type: 'image' });
           } catch (err) {
             console.error("Compression error for gallery file:", err);
@@ -275,7 +304,17 @@ const Admin: React.FC<AdminProps> = ({
       }
       
       if (newItems.length > 0) {
-        setGalleryMedia(prev => [...prev, ...newItems]);
+        if (galleryMedia.length + newItems.length > 6) {
+          alert(lang === 'fr'
+            ? "Vous ne pouvez pas ajouter plus de 6 médias dans la galerie."
+            : "You cannot add more than 6 media items to the gallery.");
+          const sliceCount = 6 - galleryMedia.length;
+          if (sliceCount > 0) {
+            setGalleryMedia(prev => [...prev, ...newItems.slice(0, sliceCount)]);
+          }
+        } else {
+          setGalleryMedia(prev => [...prev, ...newItems]);
+        }
       }
       
       if (e.target) e.target.value = '';
@@ -345,6 +384,30 @@ const Admin: React.FC<AdminProps> = ({
 
   const handleAddProject = async () => {
     if (!newProjectTitle || !previewMedia) return;
+
+    // Estimate total document size before saving
+    const tempProject = {
+      title: { fr: newProjectTitle, en: newProjectTitle, de: newProjectTitle },
+      category: newProjectCategory,
+      image: previewMedia,
+      mediaType: mediaType,
+      description: { fr: newProjectDesc, en: newProjectDesc, de: newProjectDesc },
+      problem: { fr: newProjectProblem, en: newProjectProblem, de: newProjectProblem },
+      solution: { fr: newProjectSolution, en: newProjectSolution, de: newProjectSolution },
+      caseStudy: { fr: newProjectCaseStudy, en: newProjectCaseStudy, de: newProjectCaseStudy },
+      gallery: galleryMedia
+    };
+
+    const estimatedSize = JSON.stringify(tempProject).length;
+    const MAX_SIZE = 950 * 1024; // 950KB safe limit
+
+    if (estimatedSize > MAX_SIZE) {
+      alert(lang === 'fr'
+        ? `Désolé, la taille totale du projet (${(estimatedSize / (1024 * 1024)).toFixed(2)} Mo) dépasse la limite de la base de données (1 Mo). Veuillez supprimer des médias de la galerie ou utiliser des images/vidéos plus légères.`
+        : `Sorry, the total project size (${(estimatedSize / (1024 * 1024)).toFixed(2)} MB) exceeds the database limit (1 MB). Please remove some gallery media or use smaller files.`);
+      return;
+    }
+
     setIsGenerating(true);
     try {
       if (editingProject) {
@@ -385,6 +448,27 @@ const Admin: React.FC<AdminProps> = ({
 
   const handleAddBlogPost = async () => {
     if (!blogTitle || !blogMedia) return;
+
+    const tempPost = {
+      title: { fr: blogTitle, en: blogTitle, de: blogTitle },
+      content: { fr: blogContent, en: blogContent, de: blogContent },
+      image: blogMedia,
+      mediaType: blogMediaType,
+      date: new Date().toLocaleDateString('fr-FR'),
+      likes: 0,
+      comments: []
+    };
+
+    const estimatedSize = JSON.stringify(tempPost).length;
+    const MAX_SIZE = 950 * 1024;
+
+    if (estimatedSize > MAX_SIZE) {
+      alert(lang === 'fr'
+        ? `L'article de blog est trop lourd (${(estimatedSize / (1024 * 1024)).toFixed(2)} Mo). Veuillez utiliser une image ou une vidéo plus légère (max 1 Mo).`
+        : `The blog post is too large (${(estimatedSize / (1024 * 1024)).toFixed(2)} MB). Please use a lighter image or video (max 1 MB).`);
+      return;
+    }
+
     setIsGenerating(true);
     try {
       const post: BlogPost = {
@@ -427,6 +511,7 @@ const Admin: React.FC<AdminProps> = ({
 
   const handleSaveSettings = () => {
     onUpdateSettings({
+      ...settings,
       socialLinks: {
         facebook: fbLink,
         instagram: igLink,
@@ -436,6 +521,17 @@ const Admin: React.FC<AdminProps> = ({
         fr: taglineFr,
         en: taglineEn,
         de: taglineDe
+      },
+      about: {
+        image: aboutImage,
+        title: { fr: aboutTitleFr, en: aboutTitleEn, de: aboutTitleDe },
+        bio: { fr: aboutBioFr, en: aboutBioEn, de: aboutBioDe },
+        pseudonym: { fr: aboutPseudonymFr, en: aboutPseudonymEn, de: aboutPseudonymDe },
+        quote: { fr: aboutQuoteFr, en: aboutQuoteEn, de: aboutQuoteDe }
+      },
+      services: {
+        title: { fr: servicesTitleFr, en: servicesTitleEn, de: servicesTitleDe },
+        headerDesc: { fr: servicesDescFr, en: servicesDescEn, de: servicesDescDe }
       }
     });
     alert(t.admin.settingsUpdated);
@@ -966,6 +1062,155 @@ const Admin: React.FC<AdminProps> = ({
                       onChange={(e) => setTaglineDe(e.target.value)}
                       className="w-full bg-panda-black/5 dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 px-6 py-4 rounded-2xl outline-none focus:border-panda-gold transition-all text-panda-black dark:text-panda-white"
                     />
+                  </div>
+                </div>
+              </div>
+
+              {/* About Page Management */}
+              <div className="space-y-6 pt-8 border-t border-panda-black/10 dark:border-panda-white/10">
+                <h3 className="text-xs font-black uppercase tracking-[0.3em] text-panda-gold">Page À Propos (Dynamique)</h3>
+                
+                {/* Profile Image Section */}
+                <div className="space-y-3 bg-panda-black/5 dark:bg-panda-black/40 p-6 rounded-3xl border border-panda-black/10 dark:border-panda-white/10">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-panda-black/40 dark:text-panda-white/40 block">Photo du créateur</span>
+                  <div className="flex flex-col sm:flex-row items-center gap-6">
+                    <img src={aboutImage} alt="Profile preview" className="w-24 h-24 sm:w-32 sm:h-32 rounded-2xl object-cover border border-panda-black/10 dark:border-panda-white/10" />
+                    <div className="flex-1 space-y-2 text-center sm:text-left">
+                      <button 
+                        type="button"
+                        onClick={() => aboutFileInputRef.current?.click()}
+                        className="px-6 py-3 bg-panda-gold/10 border border-panda-gold/30 hover:bg-panda-gold text-panda-gold hover:text-panda-black font-bold text-xs uppercase tracking-widest rounded-xl transition-all"
+                      >
+                        Changer la Photo
+                      </button>
+                      <input 
+                        type="file" 
+                        ref={aboutFileInputRef}
+                        accept="image/*"
+                        onChange={(e) => handleFileChange(e, 'about')}
+                        className="hidden" 
+                      />
+                      <p className="text-[10px] text-panda-black/40 dark:text-panda-white/40">Fichier image compressé pour s'adapter à la base de données.</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* About Title (Multilingual) */}
+                <div className="space-y-4 bg-panda-black/5 dark:bg-panda-black/40 p-6 rounded-3xl border border-panda-black/10 dark:border-panda-white/10">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-panda-black/40 dark:text-panda-white/40 block">Titre (Nom complet / Marque)</span>
+                  <div className="grid grid-cols-1 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-[9px] uppercase tracking-wider text-panda-gold">Français</label>
+                      <input type="text" value={aboutTitleFr} onChange={(e) => setAboutTitleFr(e.target.value)} className="w-full bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 px-4 py-3 rounded-xl text-sm text-panda-black dark:text-panda-white outline-none focus:border-panda-gold" />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[9px] uppercase tracking-wider text-panda-gold">English</label>
+                      <input type="text" value={aboutTitleEn} onChange={(e) => setAboutTitleEn(e.target.value)} className="w-full bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 px-4 py-3 rounded-xl text-sm text-panda-black dark:text-panda-white outline-none focus:border-panda-gold" />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[9px] uppercase tracking-wider text-panda-gold">Deutsch</label>
+                      <input type="text" value={aboutTitleDe} onChange={(e) => setAboutTitleDe(e.target.value)} className="w-full bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 px-4 py-3 rounded-xl text-sm text-panda-black dark:text-panda-white outline-none focus:border-panda-gold" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* About Bio (Multilingual) */}
+                <div className="space-y-4 bg-panda-black/5 dark:bg-panda-black/40 p-6 rounded-3xl border border-panda-black/10 dark:border-panda-white/10">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-panda-black/40 dark:text-panda-white/40 block">Biographie (Texte principal)</span>
+                  <div className="grid grid-cols-1 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-[9px] uppercase tracking-wider text-panda-gold">Français</label>
+                      <textarea value={aboutBioFr} onChange={(e) => setAboutBioFr(e.target.value)} className="w-full bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 px-4 py-3 rounded-xl text-sm text-panda-black dark:text-panda-white outline-none focus:border-panda-gold h-24" />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[9px] uppercase tracking-wider text-panda-gold">English</label>
+                      <textarea value={aboutBioEn} onChange={(e) => setAboutBioEn(e.target.value)} className="w-full bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 px-4 py-3 rounded-xl text-sm text-panda-black dark:text-panda-white outline-none focus:border-panda-gold h-24" />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[9px] uppercase tracking-wider text-panda-gold">Deutsch</label>
+                      <textarea value={aboutBioDe} onChange={(e) => setAboutBioDe(e.target.value)} className="w-full bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 px-4 py-3 rounded-xl text-sm text-panda-black dark:text-panda-white outline-none focus:border-panda-gold h-24" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* About Pseudonym (Multilingual) */}
+                <div className="space-y-4 bg-panda-black/5 dark:bg-panda-black/40 p-6 rounded-3xl border border-panda-black/10 dark:border-panda-white/10">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-panda-black/40 dark:text-panda-white/40 block">Pseudonyme & Approche</span>
+                  <div className="grid grid-cols-1 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-[9px] uppercase tracking-wider text-panda-gold">Français</label>
+                      <textarea value={aboutPseudonymFr} onChange={(e) => setAboutPseudonymFr(e.target.value)} className="w-full bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 px-4 py-3 rounded-xl text-sm text-panda-black dark:text-panda-white outline-none focus:border-panda-gold h-20" />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[9px] uppercase tracking-wider text-panda-gold">English</label>
+                      <textarea value={aboutPseudonymEn} onChange={(e) => setAboutPseudonymEn(e.target.value)} className="w-full bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 px-4 py-3 rounded-xl text-sm text-panda-black dark:text-panda-white outline-none focus:border-panda-gold h-20" />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[9px] uppercase tracking-wider text-panda-gold">Deutsch</label>
+                      <textarea value={aboutPseudonymDe} onChange={(e) => setAboutPseudonymDe(e.target.value)} className="w-full bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 px-4 py-3 rounded-xl text-sm text-panda-black dark:text-panda-white outline-none focus:border-panda-gold h-20" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* About Quote (Multilingual) */}
+                <div className="space-y-4 bg-panda-black/5 dark:bg-panda-black/40 p-6 rounded-3xl border border-panda-black/10 dark:border-panda-white/10">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-panda-black/40 dark:text-panda-white/40 block">Citation / Mantra</span>
+                  <div className="grid grid-cols-1 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-[9px] uppercase tracking-wider text-panda-gold">Français</label>
+                      <textarea value={aboutQuoteFr} onChange={(e) => setAboutQuoteFr(e.target.value)} className="w-full bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 px-4 py-3 rounded-xl text-sm text-panda-black dark:text-panda-white outline-none focus:border-panda-gold h-20" />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[9px] uppercase tracking-wider text-panda-gold">English</label>
+                      <textarea value={aboutQuoteEn} onChange={(e) => setAboutQuoteEn(e.target.value)} className="w-full bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 px-4 py-3 rounded-xl text-sm text-panda-black dark:text-panda-white outline-none focus:border-panda-gold h-20" />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[9px] uppercase tracking-wider text-panda-gold">Deutsch</label>
+                      <textarea value={aboutQuoteDe} onChange={(e) => setAboutQuoteDe(e.target.value)} className="w-full bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 px-4 py-3 rounded-xl text-sm text-panda-black dark:text-panda-white outline-none focus:border-panda-gold h-20" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Services Page Management */}
+              <div className="space-y-6 pt-8 border-t border-panda-black/10 dark:border-panda-white/10">
+                <h3 className="text-xs font-black uppercase tracking-[0.3em] text-panda-gold">Page Services (Dynamique)</h3>
+                
+                {/* Services Page Title */}
+                <div className="space-y-4 bg-panda-black/5 dark:bg-panda-black/40 p-6 rounded-3xl border border-panda-black/10 dark:border-panda-white/10">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-panda-black/40 dark:text-panda-white/40 block">Titre principal de la page</span>
+                  <div className="grid grid-cols-1 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-[9px] uppercase tracking-wider text-panda-gold">Français</label>
+                      <input type="text" value={servicesTitleFr} onChange={(e) => setServicesTitleFr(e.target.value)} className="w-full bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 px-4 py-3 rounded-xl text-sm text-panda-black dark:text-panda-white outline-none focus:border-panda-gold" />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[9px] uppercase tracking-wider text-panda-gold">English</label>
+                      <input type="text" value={servicesTitleEn} onChange={(e) => setServicesTitleEn(e.target.value)} className="w-full bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 px-4 py-3 rounded-xl text-sm text-panda-black dark:text-panda-white outline-none focus:border-panda-gold" />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[9px] uppercase tracking-wider text-panda-gold">Deutsch</label>
+                      <input type="text" value={servicesTitleDe} onChange={(e) => setServicesTitleDe(e.target.value)} className="w-full bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 px-4 py-3 rounded-xl text-sm text-panda-black dark:text-panda-white outline-none focus:border-panda-gold" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Services Page Header Description */}
+                <div className="space-y-4 bg-panda-black/5 dark:bg-panda-black/40 p-6 rounded-3xl border border-panda-black/10 dark:border-panda-white/10">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-panda-black/40 dark:text-panda-white/40 block">Description d'en-tête de la page</span>
+                  <div className="grid grid-cols-1 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-[9px] uppercase tracking-wider text-panda-gold">Français</label>
+                      <textarea value={servicesDescFr} onChange={(e) => setServicesDescFr(e.target.value)} className="w-full bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 px-4 py-3 rounded-xl text-sm text-panda-black dark:text-panda-white outline-none focus:border-panda-gold h-20" />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[9px] uppercase tracking-wider text-panda-gold">English</label>
+                      <textarea value={servicesDescEn} onChange={(e) => setServicesDescEn(e.target.value)} className="w-full bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 px-4 py-3 rounded-xl text-sm text-panda-black dark:text-panda-white outline-none focus:border-panda-gold h-20" />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[9px] uppercase tracking-wider text-panda-gold">Deutsch</label>
+                      <textarea value={servicesDescDe} onChange={(e) => setServicesDescDe(e.target.value)} className="w-full bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 px-4 py-3 rounded-xl text-sm text-panda-black dark:text-panda-white outline-none focus:border-panda-gold h-20" />
+                    </div>
                   </div>
                 </div>
               </div>

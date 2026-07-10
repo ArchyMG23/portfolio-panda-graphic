@@ -77,6 +77,17 @@ export interface AppSettings {
   socialLinks: SocialLinks;
   logoTagline: { fr: string; en: string; de: string };
   isSeeded?: boolean;
+  about?: {
+    image: string;
+    title: { fr: string; en: string; de: string };
+    bio: { fr: string; en: string; de: string };
+    pseudonym: { fr: string; en: string; de: string };
+    quote: { fr: string; en: string; de: string };
+  };
+  services?: {
+    title: { fr: string; en: string; de: string };
+    headerDesc: { fr: string; en: string; de: string };
+  };
 }
 
 export interface AppState {

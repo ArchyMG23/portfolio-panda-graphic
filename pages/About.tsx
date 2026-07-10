@@ -1,11 +1,23 @@
 
 import React from 'react';
-import { Language } from '../types';
+import { Language, AppSettings } from '../types';
 import { TRANSLATIONS } from '../constants';
 import { Quote, Award, Globe, Heart, Sparkles, Zap, Target } from 'lucide-react';
 
-const About: React.FC<{ lang: Language }> = ({ lang }) => {
+const About: React.FC<{ lang: Language; settings?: AppSettings }> = ({ lang, settings }) => {
   const t = TRANSLATIONS[lang];
+
+  // Dynamic variables with fallback to static translations
+  const title = settings?.about?.title?.[lang] || t.about.title;
+  const bio = settings?.about?.bio?.[lang] || t.about.bio;
+  const pseudonym = settings?.about?.pseudonym?.[lang] || t.about.pseudonym;
+  const quote = settings?.about?.quote?.[lang] || t.about.quote;
+  const image = settings?.about?.image || "https://picsum.photos/seed/victor/800/1000";
+
+  // Split title for styling (accent on last word)
+  const titleWords = title.split(' ');
+  const titleMain = titleWords.length > 1 ? titleWords.slice(0, -1).join(' ') : title;
+  const titleAccent = titleWords.length > 1 ? titleWords[titleWords.length - 1] : '';
 
   return (
     <div className="max-w-7xl mx-auto px-6 pt-28 md:pt-36 pb-20">
@@ -15,8 +27,8 @@ const About: React.FC<{ lang: Language }> = ({ lang }) => {
           <div className="absolute -inset-4 border-2 border-panda-gold translate-x-4 translate-y-4 sm:translate-x-8 sm:translate-y-8 -z-10 animate-float rounded-3xl" />
           <div className="relative overflow-hidden rounded-3xl aspect-[4/5] shadow-2xl border border-panda-white/10">
             <img 
-              src="https://picsum.photos/seed/victor/800/1000" 
-              alt="Victor Gabriel Archange" 
+              src={image} 
+              alt={title} 
               className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000 transform hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-panda-black/60 to-transparent" />
@@ -28,19 +40,19 @@ const About: React.FC<{ lang: Language }> = ({ lang }) => {
         <div className="animate-slide-up animate-delay-200">
           <span className="text-panda-gold font-display text-xs tracking-[0.6em] uppercase mb-8 block">{t.about.creator}</span>
           <h1 className="text-4xl sm:text-6xl md:text-8xl font-display font-bold tracking-tighter mb-6 sm:mb-12 uppercase leading-none text-panda-black dark:text-panda-white">
-            {t.about.title.split(' ').slice(0, -1).join(' ')} <br/> <span className="text-panda-gold">{t.about.title.split(' ').slice(-1)}</span>
+            {titleMain} {titleAccent && <><br/> <span className="text-panda-gold">{titleAccent}</span></>}
           </h1>
-          <div className="space-y-8 text-xl text-panda-black/70 dark:text-panda-white/70 leading-relaxed font-light">
+          <div className="space-y-8 text-xl text-panda-black/70 dark:text-panda-white/70 leading-relaxed font-light font-sans">
             <p className="first-letter:text-5xl first-letter:text-panda-gold first-letter:font-display first-letter:mr-3 first-letter:float-left">
-              {t.about.bio}
+              {bio}
             </p>
             <p>
-              {t.about.pseudonym}
+              {pseudonym}
             </p>
             <div className="pt-8 sm:pt-10 border-t border-panda-black/10 dark:border-panda-white/10 flex flex-col items-start relative overflow-hidden p-6 sm:p-8 rounded-3xl bg-panda-black/5 dark:bg-panda-white/5">
               <Quote className="text-panda-gold/40 mb-4 sm:mb-6" size={40} />
               <p className="italic text-panda-black dark:text-panda-white font-medium text-lg sm:text-2xl leading-relaxed relative z-10">
-                {t.about.quote}
+                {quote}
               </p>
               <div className="absolute top-0 right-0 w-32 h-32 marble-texture opacity-10 rounded-bl-full pointer-events-none" />
             </div>
