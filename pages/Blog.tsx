@@ -103,13 +103,13 @@ const Blog: React.FC<BlogProps> = ({ lang, posts, onUpdatePost, isAdmin }) => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-20 relative z-10">
+    <div className="max-w-7xl mx-auto px-6 pt-28 md:pt-36 pb-20 relative z-10">
       <header className="mb-24 reveal text-center">
         <div className="inline-flex items-center space-x-3 mb-6 bg-panda-black/5 dark:bg-panda-white/5 px-6 py-2 rounded-full border border-panda-black/10 dark:border-white/10">
           <Sparkles size={16} className="text-panda-gold animate-pulse" />
           <span className="text-panda-gold font-display text-xs tracking-[0.5em] uppercase block">{t.blog.headerTag}</span>
         </div>
-        <h1 className="text-6xl md:text-9xl font-display font-bold tracking-tighter mb-8 uppercase leading-none text-panda-black dark:text-panda-white">
+        <h1 className="text-4xl sm:text-6xl md:text-9xl font-display font-bold tracking-tighter mb-6 sm:mb-8 uppercase leading-none text-panda-black dark:text-panda-white">
           {t.blog.headerTitle.split(' ').slice(0, -1).join(' ')} <span className="text-panda-gold">{t.blog.headerTitle.split(' ').slice(-1)}</span>
         </h1>
         <p className="text-xl md:text-2xl text-panda-black/60 dark:text-panda-white/60 max-w-3xl mx-auto font-light leading-relaxed">
@@ -129,7 +129,7 @@ const Blog: React.FC<BlogProps> = ({ lang, posts, onUpdatePost, isAdmin }) => {
               onClick={() => setSelectedPost(post)}
               className="reveal group cursor-pointer relative"
             >
-              <div className="aspect-[16/10] overflow-hidden rounded-[2.5rem] mb-10 bg-panda-black/5 dark:bg-panda-white/5 border border-panda-black/10 dark:border-panda-white/10 relative shadow-2xl transition-all duration-700 group-hover:border-panda-gold/50">
+              <div className="aspect-[16/10] overflow-hidden rounded-[1.5rem] sm:rounded-[2.5rem] mb-6 sm:mb-10 bg-panda-black/5 dark:bg-panda-white/5 border border-panda-black/10 dark:border-panda-white/10 relative shadow-2xl transition-all duration-700 group-hover:border-panda-gold/50">
                 {post.mediaType === 'video' ? (
                   <video 
                     src={post.image} 
@@ -201,7 +201,7 @@ const Blog: React.FC<BlogProps> = ({ lang, posts, onUpdatePost, isAdmin }) => {
                 </div>
               </div>
 
-              <h2 className="text-3xl md:text-4xl font-display mb-6 group-hover:text-panda-gold transition-colors leading-tight uppercase tracking-tighter text-panda-black dark:text-panda-white">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-display mb-4 sm:mb-6 group-hover:text-panda-gold transition-colors leading-tight uppercase tracking-tighter text-panda-black dark:text-panda-white">
                 {post.title[lang]}
               </h2>
               <p className="text-panda-black/70 dark:text-panda-white/50 line-clamp-2 mb-8 leading-relaxed font-light text-lg">
@@ -219,13 +219,13 @@ const Blog: React.FC<BlogProps> = ({ lang, posts, onUpdatePost, isAdmin }) => {
 
       {/* DETAILED BLOG MODAL */}
       {selectedPost && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-12 animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 md:p-12 animate-in fade-in duration-300">
           <div className="absolute inset-0 bg-panda-black/98 backdrop-blur-3xl" onClick={() => setSelectedPost(null)} />
           
-          <div className="relative w-full max-w-5xl bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 rounded-[3rem] overflow-hidden flex flex-col max-h-[92vh] shadow-2xl">
+          <div className="relative w-full max-w-5xl bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 rounded-[1.5rem] sm:rounded-[3rem] overflow-hidden flex flex-col max-h-[92vh] shadow-2xl">
             <button 
               onClick={() => setSelectedPost(null)}
-              className="absolute top-8 right-8 z-20 p-4 bg-panda-black/10 dark:bg-panda-white/10 text-panda-black dark:text-white rounded-full hover:bg-panda-gold hover:text-panda-black transition-all"
+              className="absolute top-4 right-4 sm:top-8 sm:right-8 z-20 p-2 sm:p-4 bg-panda-black/50 dark:bg-panda-white/20 text-white rounded-full hover:bg-panda-gold hover:text-panda-black transition-all"
             >
               <X size={24} />
             </button>
@@ -240,7 +240,7 @@ const Blog: React.FC<BlogProps> = ({ lang, posts, onUpdatePost, isAdmin }) => {
                 <div className="absolute inset-0 bg-gradient-to-t from-panda-black via-transparent to-transparent" />
               </div>
 
-              <div className="px-8 md:px-20 py-16">
+              <div className="px-5 sm:px-10 md:px-20 py-10 sm:py-16">
                 <div className="flex items-center justify-between mb-12">
                    <div className="flex items-center space-x-6 text-[10px] font-black uppercase tracking-[0.4em] text-panda-gold">
                       <span>{selectedPost.date}</span>
@@ -281,7 +281,7 @@ const Blog: React.FC<BlogProps> = ({ lang, posts, onUpdatePost, isAdmin }) => {
                    </div>
                 </div>
 
-                <h2 className="text-4xl md:text-7xl font-display font-bold mb-12 uppercase tracking-tighter leading-none border-b border-panda-black/10 dark:border-panda-white/10 pb-12 text-panda-black dark:text-panda-white">
+                <h2 className="text-2xl sm:text-4xl md:text-7xl font-display font-bold mb-6 sm:mb-12 uppercase tracking-tighter leading-none border-b border-panda-black/10 dark:border-panda-white/10 pb-6 sm:pb-12 text-panda-black dark:text-panda-white">
                   {selectedPost.title[lang]}
                 </h2>
 
@@ -297,7 +297,7 @@ const Blog: React.FC<BlogProps> = ({ lang, posts, onUpdatePost, isAdmin }) => {
                       <h3 className="text-2xl font-display uppercase tracking-tighter text-panda-black dark:text-panda-white">{t.blog.comments} <span className="text-panda-black/40 dark:text-panda-white/20 text-lg">({selectedPost.comments.length})</span></h3>
                    </div>
 
-                   <form onSubmit={handleAddComment} className="bg-panda-black/5 dark:bg-panda-white/5 border border-panda-black/10 dark:border-panda-white/10 p-10 rounded-[2.5rem] mb-16">
+                   <form onSubmit={handleAddComment} className="bg-panda-black/5 dark:bg-panda-white/5 border border-panda-black/10 dark:border-panda-white/10 p-5 sm:p-10 rounded-[1.5rem] sm:rounded-[2.5rem] mb-12 sm:mb-16">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                         <div className="space-y-2">
                            <label className="text-[10px] uppercase font-black tracking-widest text-panda-gold block ml-2">{t.blog.yourName}</label>

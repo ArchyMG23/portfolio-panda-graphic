@@ -100,7 +100,7 @@ const Services: React.FC<{ lang: Language }> = ({ lang }) => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-20 antialiased relative">
+    <div className="max-w-7xl mx-auto px-6 pt-28 md:pt-36 pb-20 antialiased relative">
       {/* Animation de texte flottant */}
       {floatingText && (
         <div 
@@ -118,7 +118,7 @@ const Services: React.FC<{ lang: Language }> = ({ lang }) => {
         <div className="inline-block bg-panda-gold/10 border border-panda-gold/20 text-panda-gold px-6 py-2 rounded-full mb-6 text-xs font-bold uppercase tracking-[0.4em]">
           {t.services.headerTag}
         </div>
-        <h1 className="text-6xl md:text-8xl font-display font-bold tracking-tighter mb-8 uppercase leading-none text-panda-black dark:text-panda-white">
+        <h1 className="text-4xl sm:text-6xl md:text-8xl font-display font-bold tracking-tighter mb-6 sm:mb-8 uppercase leading-none text-panda-black dark:text-panda-white">
           {t.services.title.split(' ')[0]} <span className="text-panda-gold">{t.services.title.split(' ').slice(1).join(' ')}</span>
         </h1>
         <p className="text-2xl text-panda-black/80 dark:text-panda-white/80 max-w-3xl font-light leading-relaxed">
@@ -126,12 +126,12 @@ const Services: React.FC<{ lang: Language }> = ({ lang }) => {
         </p>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-40">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-20 md:mb-40">
         {serviceList.map((service, i) => (
           <div 
             key={i} 
             onClick={(e) => handleServiceClick(e, service.id, service.clickMantra)}
-            className="reveal p-10 bg-panda-black/5 dark:bg-panda-white/5 border border-panda-black/10 dark:border-panda-white/10 rounded-[2.5rem] group hover:bg-panda-black/10 dark:hover:bg-panda-white/10 hover:border-panda-gold transition-all duration-700 relative overflow-hidden h-full flex flex-col cursor-pointer"
+            className="reveal p-6 sm:p-10 bg-panda-black/5 dark:bg-panda-white/5 border border-panda-black/10 dark:border-panda-white/10 rounded-[1.5rem] sm:rounded-[2.5rem] group hover:bg-panda-black/10 dark:hover:bg-panda-white/10 hover:border-panda-gold transition-all duration-700 relative overflow-hidden h-full flex flex-col cursor-pointer"
             style={{ transitionDelay: service.delay }}
           >
             {/* Texture de marbre subtile en arrière-plan */}
@@ -180,38 +180,38 @@ const Services: React.FC<{ lang: Language }> = ({ lang }) => {
       <section className="reveal relative group px-4">
         <div 
           onClick={() => navigate('/contact')}
-          className="max-w-5xl mx-auto p-12 md:p-24 rounded-[4rem] text-center relative overflow-hidden cursor-pointer border border-panda-black/10 dark:border-panda-white/10 shadow-2xl transition-all duration-500 bg-white dark:bg-panda-black group-hover:border-panda-gold/50"
+          className="max-w-5xl mx-auto py-16 px-6 md:p-24 rounded-[2rem] md:rounded-[4rem] text-center relative overflow-hidden cursor-pointer border border-panda-black/10 dark:border-panda-white/10 shadow-2xl transition-all duration-500 bg-white dark:bg-panda-black group-hover:border-panda-gold/50"
         >
           <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,_rgba(212,175,55,0.05)_0%,_transparent_70%)] pointer-events-none" />
           <div className="absolute -top-32 -left-32 w-64 h-64 bg-panda-gold/10 blur-[80px] rounded-full group-hover:translate-x-10 transition-transform duration-1000" />
           <div className="absolute -bottom-32 -right-32 w-64 h-64 bg-panda-green/10 blur-[80px] rounded-full group-hover:-translate-x-10 transition-transform duration-1000" />
 
           <div className="relative z-10 flex flex-col items-center">
-            <div className="inline-flex items-center space-x-3 bg-panda-gold/10 px-8 py-3 rounded-full mb-10 border border-panda-gold/20">
-              <Zap size={16} className="text-panda-gold animate-pulse" />
-              <span className="text-[11px] font-black uppercase tracking-[0.4em] text-panda-gold">{t.services.collaborationTag}</span>
+            <div className="inline-flex items-center space-x-3 bg-panda-gold/10 px-6 py-2 rounded-full mb-6 md:mb-10 border border-panda-gold/20">
+              <Zap size={14} className="text-panda-gold animate-pulse" />
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-panda-gold">{t.services.collaborationTag}</span>
             </div>
 
-            <h2 className="text-5xl md:text-7xl font-display font-bold mb-10 uppercase tracking-tighter text-panda-black dark:text-panda-white leading-none">
+            <h2 className="text-2xl sm:text-5xl md:text-7xl font-display font-bold mb-6 md:mb-10 uppercase tracking-tighter text-panda-black dark:text-panda-white leading-none">
               {t.services.ctaTitle.split(' ').slice(0, -2).join(' ')} <span className="text-panda-gold">{t.services.ctaTitle.split(' ').slice(-2).join(' ')}</span>
             </h2>
             
-            <p className="text-xl md:text-2xl text-panda-black/70 dark:text-panda-white/70 max-w-3xl mx-auto mb-16 font-light leading-relaxed">
+            <p className="text-sm sm:text-xl md:text-2xl text-panda-black/70 dark:text-panda-white/70 max-w-3xl mx-auto mb-10 md:mb-16 font-light leading-relaxed">
               {t.services.ctaDesc}
             </p>
 
-            <div className="flex flex-col md:flex-row items-center justify-center gap-10">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 md:gap-10 w-full sm:w-auto">
               <button 
-                className="group/btn relative px-16 py-6 bg-panda-gold text-panda-black font-black uppercase tracking-[0.3em] rounded-2xl overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-xl shadow-panda-gold/20"
+                className="w-full sm:w-auto group/btn relative px-8 py-4 sm:px-16 sm:py-6 bg-panda-gold text-panda-black font-black uppercase tracking-[0.3em] rounded-2xl overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-xl shadow-panda-gold/20"
               >
                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-500" />
-                <span className="relative z-10 flex items-center text-sm">
-                  {t.services.ctaButton} <ArrowRight className="ml-4 group-hover/btn:translate-x-2 transition-transform" size={20} />
+                <span className="relative z-10 flex items-center justify-center text-xs sm:text-sm">
+                  {t.services.ctaButton} <ArrowRight className="ml-2 sm:ml-4 group-hover/btn:translate-x-2 transition-transform" size={16} />
                 </span>
               </button>
               
-              <button className="flex items-center space-x-4 text-panda-black/60 dark:text-panda-white/60 hover:text-panda-gold transition-colors font-black uppercase tracking-[0.2em] text-[11px] group/link border-b-2 border-panda-black/5 dark:border-white/5 pb-2 hover:border-panda-gold">
-                <MessageSquare size={18} className="group-hover/link:rotate-12 transition-transform" />
+              <button className="flex items-center justify-center space-x-2 sm:space-x-4 text-panda-black/60 dark:text-panda-white/60 hover:text-panda-gold transition-colors font-black uppercase tracking-[0.2em] text-[10px] sm:text-[11px] group/link border-b-2 border-panda-black/5 dark:border-white/5 pb-2 hover:border-panda-gold">
+                <MessageSquare size={16} className="group-hover/link:rotate-12 transition-transform" />
                 <span>{t.services.askQuestion}</span>
               </button>
             </div>

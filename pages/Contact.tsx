@@ -171,7 +171,7 @@ const Contact: React.FC<ContactProps> = ({ lang, onAddAppointment, appointments,
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-20 relative z-10">
+    <div className="max-w-7xl mx-auto px-6 pt-28 md:pt-36 pb-20 relative z-10">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
         
         {/* Left Column: Info & Context */}
@@ -180,7 +180,7 @@ const Contact: React.FC<ContactProps> = ({ lang, onAddAppointment, appointments,
             <div className="inline-block bg-panda-gold/10 border border-panda-gold/20 text-panda-gold px-4 py-1 rounded-full mb-6 text-[10px] font-black uppercase tracking-widest">
               {t.booking.headerTag}
             </div>
-            <h1 className="text-5xl md:text-7xl font-display font-bold uppercase tracking-tighter mb-6 md:mb-8 leading-none text-panda-black dark:text-panda-white">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-display font-bold uppercase tracking-tighter mb-4 sm:mb-8 leading-none text-panda-black dark:text-panda-white">
               {t.booking.headerTitle.split(' ').slice(0, -1).join(' ')} <span className="text-panda-gold">{t.booking.headerTitle.split(' ').slice(-1)}</span>
             </h1>
             <p className="text-lg md:text-xl text-panda-black/70 dark:text-panda-white/60 font-light leading-relaxed">
@@ -201,7 +201,7 @@ const Contact: React.FC<ContactProps> = ({ lang, onAddAppointment, appointments,
             </div>
           </div>
 
-          <div className="reveal p-10 bg-panda-green/5 border border-panda-green/20 rounded-[2.5rem] relative overflow-hidden group">
+          <div className="reveal p-6 sm:p-10 bg-panda-green/5 border border-panda-green/20 rounded-[1.5rem] sm:rounded-[2.5rem] relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-4 text-panda-green/20"><Sparkles size={40} /></div>
             <h3 className="font-display text-xl mb-6 uppercase tracking-tight text-panda-green">{t.newsletter.title}</h3>
             <div className="flex flex-col space-y-3">
@@ -223,7 +223,7 @@ const Contact: React.FC<ContactProps> = ({ lang, onAddAppointment, appointments,
         </div>
 
         {/* Right Column: Interactive Form */}
-        <div className="lg:col-span-7 bg-white dark:bg-panda-white/5 p-8 md:p-12 rounded-[3rem] border border-panda-black/10 dark:border-panda-white/10 relative shadow-2xl reveal">
+        <div className="lg:col-span-7 bg-white dark:bg-panda-white/5 p-5 sm:p-8 md:p-12 rounded-[1.5rem] sm:rounded-[3rem] border border-panda-black/10 dark:border-panda-white/10 relative shadow-2xl reveal">
           <div className="absolute inset-0 marble-texture opacity-5 pointer-events-none rounded-[3rem]" />
           
           {submitted ? (
@@ -284,13 +284,13 @@ const Contact: React.FC<ContactProps> = ({ lang, onAddAppointment, appointments,
               {/* Service Selection Chips */}
               <div className="space-y-6">
                 <label className="text-[10px] uppercase tracking-[0.3em] font-black text-panda-black/60 dark:text-panda-white/40 ml-2">{t.booking.requiredServices}</label>
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap gap-2 sm:gap-3">
                   {AVAILABLE_SERVICES.map((s) => (
                     <button
                       key={s.id}
                       type="button"
                       onClick={() => toggleService(s.id)}
-                      className={`flex items-center space-x-3 px-6 py-4 rounded-2xl border transition-all text-[11px] font-black uppercase tracking-widest group ${
+                      className={`flex items-center space-x-2 sm:space-x-3 px-4 py-3 sm:px-6 sm:py-4 rounded-xl sm:rounded-2xl border transition-all text-[10px] sm:text-[11px] font-black uppercase tracking-widest group ${
                         formData.services.includes(s.id)
                         ? 'bg-panda-gold border-panda-gold text-panda-black shadow-xl shadow-panda-gold/20'
                         : 'bg-panda-black/5 dark:bg-panda-black/40 border-panda-black/10 dark:border-panda-white/10 text-panda-black/60 dark:text-panda-white/40 hover:border-panda-gold/50'
@@ -327,12 +327,12 @@ const Contact: React.FC<ContactProps> = ({ lang, onAddAppointment, appointments,
                   </div>
 
                   {/* Calendar Grid */}
-                  <div className="grid grid-cols-7 gap-1 md:gap-2 text-center mb-4">
+                  <div className="grid grid-cols-7 gap-1 sm:gap-2 text-center mb-4">
                     {t.booking.calendarDays.map((d, i) => (
-                      <span key={`${d}-${i}`} className="text-[8px] md:text-[9px] font-black text-panda-black/40 dark:text-panda-white/20">{d}</span>
+                      <span key={`${d}-${i}`} className="text-[8px] sm:text-[9px] font-black text-panda-black/40 dark:text-panda-white/20">{d}</span>
                     ))}
                   </div>
-                  <div className="grid grid-cols-7 gap-1 md:gap-2">
+                  <div className="grid grid-cols-7 gap-1 sm:gap-2">
                     {daysInMonth.map((date, i) => {
                       if (!date) return <div key={i} className="aspect-square" />;
                       
@@ -354,7 +354,7 @@ const Contact: React.FC<ContactProps> = ({ lang, onAddAppointment, appointments,
                           type="button"
                           disabled={isPast || isFullyBusy}
                           onClick={() => selectDate(date)}
-                          className={`aspect-square flex flex-col items-center justify-center rounded-xl text-xs font-bold transition-all relative overflow-hidden ${
+                          className={`aspect-square flex flex-col items-center justify-center rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold transition-all relative overflow-hidden ${
                             isSelected 
                               ? 'bg-panda-gold text-panda-black scale-105 shadow-lg shadow-panda-gold/30' 
                               : isPast || isFullyBusy

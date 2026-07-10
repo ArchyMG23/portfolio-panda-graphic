@@ -491,7 +491,7 @@ const App: React.FC = () => {
               <div className="w-10 h-10 bg-panda-gold rounded-full flex items-center justify-center text-panda-black font-black text-xl group-hover:rotate-[360deg] transition-transform duration-1000">P</div>
               <div className="flex flex-col">
                 <span className="font-display text-xl font-bold tracking-tighter text-panda-black dark:text-panda-white group-hover:text-panda-gold transition-colors leading-none">PANDA<span className="text-panda-gold">_</span>GRAPHIC</span>
-                <span className="text-[8px] uppercase tracking-widest text-panda-black/40 dark:text-panda-white/40 font-bold mt-1">{settings.logoTagline[lang]}</span>
+                <span className="text-[8px] uppercase tracking-widest text-panda-black/40 dark:text-panda-white/40 font-bold mt-1 max-w-[150px] sm:max-w-none truncate sm:whitespace-normal">{settings.logoTagline[lang]}</span>
               </div>
             </Link>
 
@@ -583,7 +583,7 @@ const App: React.FC = () => {
           )}
         </AnimatePresence>
 
-        <main className="pt-20">
+        <main className="min-h-screen">
           <Routes>
             <Route path="/" element={<Home lang={lang} projects={projects} posts={posts} testimonials={testimonials} />} />
             <Route path="/portfolio" element={<Portfolio lang={lang} projects={projects} />} />

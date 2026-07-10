@@ -55,10 +55,10 @@ const Portfolio: React.FC<PortfolioProps> = ({ lang, projects }) => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-20">
+    <div className="max-w-7xl mx-auto px-6 pt-28 md:pt-36 pb-20">
       <header className="mb-20 text-center reveal">
         <span className="text-panda-gold font-display text-sm tracking-widest uppercase mb-4 block">{t.portfolio.title}</span>
-        <h1 className="text-6xl md:text-8xl font-display font-bold tracking-tighter mb-12 uppercase text-panda-black dark:text-panda-white">PORTFOLIO</h1>
+        <h1 className="text-4xl sm:text-6xl md:text-8xl font-display font-bold tracking-tighter mb-10 sm:mb-12 uppercase text-panda-black dark:text-panda-white">PORTFOLIO</h1>
         
         {/* Search Bar */}
         <div className="max-w-xl mx-auto mb-12 relative group px-4">
@@ -94,7 +94,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ lang, projects }) => {
 
       <motion.div 
         layout
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-10"
       >
         <AnimatePresence mode='popLayout'>
           {filteredProjects.map((project) => (
@@ -135,10 +135,10 @@ const Portfolio: React.FC<PortfolioProps> = ({ lang, projects }) => {
                    </div>
                 </div>
               </div>
-              <div className="p-10">
-                <span className="text-panda-gold text-[10px] font-black uppercase tracking-[0.3em] mb-4 block">{getCategoryLabel(project.category)}</span>
-                <h3 className="text-3xl font-display mb-4 group-hover:text-panda-gold transition-colors tracking-tight text-panda-black dark:text-panda-white">{project.title[lang]}</h3>
-                <p className="text-panda-black/70 dark:text-panda-white/50 text-sm leading-relaxed mb-8 font-light line-clamp-3">{project.description[lang]}</p>
+              <div className="p-6 sm:p-10">
+                <span className="text-panda-gold text-[10px] font-black uppercase tracking-[0.3em] mb-3 sm:mb-4 block">{getCategoryLabel(project.category)}</span>
+                <h3 className="text-xl sm:text-3xl font-display mb-3 sm:mb-4 group-hover:text-panda-gold transition-colors tracking-tight text-panda-black dark:text-panda-white">{project.title[lang]}</h3>
+                <p className="text-panda-black/70 dark:text-panda-white/50 text-sm leading-relaxed mb-6 sm:mb-8 font-light line-clamp-3">{project.description[lang]}</p>
                 <button className="text-[10px] uppercase font-black tracking-widest border-b-2 border-panda-gold/30 pb-1 hover:border-panda-gold transition-all text-panda-black dark:text-panda-white group-hover:text-panda-gold flex items-center space-x-2">
                   <span>{t.portfolio.exploreCaseStudy}</span>
                   <ArrowRight size={12} />
@@ -157,15 +157,15 @@ const Portfolio: React.FC<PortfolioProps> = ({ lang, projects }) => {
 
       {/* PROJECT DETAIL MODAL (Case Study) */}
       {selectedProject && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 md:p-12 animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 md:p-12 animate-in fade-in duration-300">
           <div className="absolute inset-0 bg-panda-black/95 backdrop-blur-2xl" onClick={() => setSelectedProject(null)} />
           
-          <div className="relative w-full max-w-6xl bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 rounded-[3rem] overflow-hidden flex flex-col lg:flex-row max-h-[90vh] shadow-2xl">
+          <div className="relative w-full max-w-6xl bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 rounded-[1.5rem] sm:rounded-[3rem] overflow-hidden flex flex-col lg:flex-row max-h-[90vh] shadow-2xl">
             <button 
               onClick={() => setSelectedProject(null)}
-              className="absolute top-8 right-8 z-10 p-4 bg-panda-black/10 dark:bg-panda-white/10 text-panda-black dark:text-white rounded-full hover:bg-panda-gold hover:text-panda-black transition-all"
+              className="absolute top-4 right-4 sm:top-8 sm:right-8 z-20 p-2 sm:p-4 bg-panda-black/50 dark:bg-panda-white/20 text-white rounded-full hover:bg-panda-gold hover:text-panda-black transition-all"
             >
-              <X size={24} />
+              <X size={20} />
             </button>
 
             {/* Left: Media */}
@@ -177,7 +177,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ lang, projects }) => {
               const currentMedia = projectMediaList[activeMediaIndex] || { url: selectedProject.image, type: selectedProject.mediaType };
               
               return (
-                <div className="w-full lg:w-1/2 bg-panda-black/5 dark:bg-panda-black/50 border-r border-panda-black/5 dark:border-panda-white/5 relative flex flex-col justify-between h-[450px] lg:h-auto overflow-hidden">
+                <div className="w-full lg:w-1/2 bg-panda-black/5 dark:bg-panda-black/50 border-r border-panda-black/5 dark:border-panda-white/5 relative flex flex-col justify-between h-[300px] sm:h-[450px] lg:h-auto overflow-hidden">
                   <div className="flex-1 w-full h-full relative overflow-hidden bg-black/40 flex items-center justify-center">
                     {currentMedia.type === 'video' ? (
                       <video 
@@ -199,8 +199,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ lang, projects }) => {
                     )}
                     
                     {/* Category Badge */}
-                    <div className="absolute top-8 left-8 z-10">
-                       <div className="bg-panda-gold text-panda-black px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest shadow-xl">
+                    <div className="absolute top-4 left-4 sm:top-8 sm:left-8 z-10">
+                       <div className="bg-panda-gold text-panda-black px-4 py-1.5 sm:px-6 sm:py-2 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-widest shadow-xl">
                           {getCategoryLabel(selectedProject.category)}
                        </div>
                     </div>
@@ -234,10 +234,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ lang, projects }) => {
                   )}
                 </div>
               );
-            })()}
-
-            {/* Right: Content */}
-            <div className="w-full lg:w-1/2 p-12 md:p-20 overflow-y-auto custom-scrollbar">
+            })()}            {/* Right: Content */}
+            <div className="w-full lg:w-1/2 p-6 sm:p-12 md:p-20 overflow-y-auto custom-scrollbar">
               <span className="text-panda-gold font-display text-xs tracking-[0.5em] uppercase mb-6 block">{t.portfolio.caseStudyTitle}</span>
               <h2 className="text-4xl md:text-6xl font-display font-bold mb-10 uppercase tracking-tighter leading-none text-panda-black dark:text-panda-white">{selectedProject.title[lang]}</h2>
               
@@ -251,23 +249,23 @@ const Portfolio: React.FC<PortfolioProps> = ({ lang, projects }) => {
                     {selectedProject.description[lang]}
                   </p>
                 </div>
-
+ 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="p-8 rounded-[2rem] bg-panda-black/5 dark:bg-panda-white/5 border border-panda-black/10 dark:border-panda-white/10">
+                  <div className="p-5 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] bg-panda-black/5 dark:bg-panda-white/5 border border-panda-black/10 dark:border-panda-white/10">
                     <h4 className="text-panda-gold text-[10px] uppercase font-black tracking-widest mb-4">{t.portfolio.problemLabel}</h4>
                     <p className="text-panda-black/70 dark:text-panda-white/60 text-base leading-relaxed font-light">
                       {selectedProject.problem[lang]}
                     </p>
                   </div>
-                  <div className="p-8 rounded-[2rem] bg-panda-gold/5 border border-panda-gold/20">
+                  <div className="p-5 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] bg-panda-gold/5 border border-panda-gold/20">
                     <h4 className="text-panda-gold text-[10px] uppercase font-black tracking-widest mb-4">{t.portfolio.solutionLabel}</h4>
                     <p className="text-panda-black/70 dark:text-panda-white/60 text-base leading-relaxed font-light">
                       {selectedProject.solution[lang]}
                     </p>
                   </div>
                 </div>
-
-                <div className="p-10 rounded-[2rem] marble-texture border border-panda-black/5 dark:border-panda-white/5 shadow-inner bg-panda-black/5 dark:bg-panda-white/5">
+ 
+                <div className="p-6 sm:p-10 rounded-[1.5rem] sm:rounded-[2rem] marble-texture border border-panda-black/5 dark:border-panda-white/5 shadow-inner bg-panda-black/5 dark:bg-panda-white/5">
                   <h4 className="text-panda-black/60 dark:text-panda-white/40 text-[10px] uppercase font-black tracking-widest mb-6">{t.portfolio.process}</h4>
                   <div className="text-panda-black dark:text-panda-white text-lg leading-relaxed space-y-4 whitespace-pre-line font-medium">
                     {selectedProject.caseStudy[lang]}

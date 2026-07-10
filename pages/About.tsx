@@ -8,11 +8,11 @@ const About: React.FC<{ lang: Language }> = ({ lang }) => {
   const t = TRANSLATIONS[lang];
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-20">
+    <div className="max-w-7xl mx-auto px-6 pt-28 md:pt-36 pb-20">
       {/* Intro Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center mb-40">
-        <div className="relative animate-slide-up">
-          <div className="absolute -inset-4 border-2 border-panda-gold translate-x-8 translate-y-8 -z-10 animate-float rounded-3xl" />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center mb-20 md:mb-40">
+        <div className="relative animate-slide-up max-w-[450px] mx-auto lg:max-w-none w-full">
+          <div className="absolute -inset-4 border-2 border-panda-gold translate-x-4 translate-y-4 sm:translate-x-8 sm:translate-y-8 -z-10 animate-float rounded-3xl" />
           <div className="relative overflow-hidden rounded-3xl aspect-[4/5] shadow-2xl border border-panda-white/10">
             <img 
               src="https://picsum.photos/seed/victor/800/1000" 
@@ -27,7 +27,7 @@ const About: React.FC<{ lang: Language }> = ({ lang }) => {
         </div>
         <div className="animate-slide-up animate-delay-200">
           <span className="text-panda-gold font-display text-xs tracking-[0.6em] uppercase mb-8 block">{t.about.creator}</span>
-          <h1 className="text-5xl md:text-8xl font-display font-bold tracking-tighter mb-12 uppercase leading-none text-panda-black dark:text-panda-white">
+          <h1 className="text-4xl sm:text-6xl md:text-8xl font-display font-bold tracking-tighter mb-6 sm:mb-12 uppercase leading-none text-panda-black dark:text-panda-white">
             {t.about.title.split(' ').slice(0, -1).join(' ')} <br/> <span className="text-panda-gold">{t.about.title.split(' ').slice(-1)}</span>
           </h1>
           <div className="space-y-8 text-xl text-panda-black/70 dark:text-panda-white/70 leading-relaxed font-light">
@@ -37,9 +37,9 @@ const About: React.FC<{ lang: Language }> = ({ lang }) => {
             <p>
               {t.about.pseudonym}
             </p>
-            <div className="pt-10 border-t border-panda-black/10 dark:border-panda-white/10 flex flex-col items-start relative overflow-hidden p-8 rounded-3xl bg-panda-black/5 dark:bg-panda-white/5">
-              <Quote className="text-panda-gold/40 mb-6" size={50} />
-              <p className="italic text-panda-black dark:text-panda-white font-medium text-2xl leading-relaxed relative z-10">
+            <div className="pt-8 sm:pt-10 border-t border-panda-black/10 dark:border-panda-white/10 flex flex-col items-start relative overflow-hidden p-6 sm:p-8 rounded-3xl bg-panda-black/5 dark:bg-panda-white/5">
+              <Quote className="text-panda-gold/40 mb-4 sm:mb-6" size={40} />
+              <p className="italic text-panda-black dark:text-panda-white font-medium text-lg sm:text-2xl leading-relaxed relative z-10">
                 {t.about.quote}
               </p>
               <div className="absolute top-0 right-0 w-32 h-32 marble-texture opacity-10 rounded-bl-full pointer-events-none" />
@@ -49,32 +49,32 @@ const About: React.FC<{ lang: Language }> = ({ lang }) => {
       </div>
 
       {/* Values / Pillars */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-40 reveal">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-10 mb-20 md:mb-40 reveal">
         {[
-          { icon: <Sparkles size={40} />, title: t.about.pillars.excellence.title, desc: t.about.pillars.excellence.desc },
-          { icon: <Zap size={40} />, title: t.about.pillars.impact.title, desc: t.about.pillars.impact.desc },
-          { icon: <Target size={40} />, title: t.about.pillars.strategy.title, desc: t.about.pillars.strategy.desc }
+          { icon: <Sparkles size={36} />, title: t.about.pillars.excellence.title, desc: t.about.pillars.excellence.desc },
+          { icon: <Zap size={36} />, title: t.about.pillars.impact.title, desc: t.about.pillars.impact.desc },
+          { icon: <Target size={36} />, title: t.about.pillars.strategy.title, desc: t.about.pillars.strategy.desc }
         ].map((item, i) => (
-          <div key={i} className="p-12 border border-panda-black/10 dark:border-panda-white/10 rounded-[2.5rem] bg-panda-black/5 dark:bg-panda-white/5 hover-gold-glow group transition-all duration-500">
-            <div className="text-panda-gold mb-8 group-hover:scale-125 transition-transform duration-500">{item.icon}</div>
-            <h3 className="text-2xl font-display mb-4 uppercase tracking-tight text-panda-black dark:text-panda-white">{item.title}</h3>
-            <p className="text-panda-black/70 dark:text-panda-white/50 leading-relaxed">{item.desc}</p>
+          <div key={i} className="p-6 sm:p-12 border border-panda-black/10 dark:border-panda-white/10 rounded-[1.5rem] sm:rounded-[2.5rem] bg-panda-black/5 dark:bg-panda-white/5 hover-gold-glow group transition-all duration-500">
+            <div className="text-panda-gold mb-6 sm:mb-8 group-hover:scale-125 transition-transform duration-500">{item.icon}</div>
+            <h3 className="text-xl sm:text-2xl font-display mb-3 sm:mb-4 uppercase tracking-tight text-panda-black dark:text-panda-white">{item.title}</h3>
+            <p className="text-panda-black/70 dark:text-panda-white/50 leading-relaxed text-sm sm:text-base">{item.desc}</p>
           </div>
         ))}
       </div>
 
       {/* Stats Section with Marble Accents */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 border-t border-panda-black/10 dark:border-panda-white/10 pt-20 reveal">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-12 border-t border-panda-black/10 dark:border-panda-white/10 pt-10 sm:pt-20 reveal">
         {[
           { label: t.about.stats.projects, value: '150+' },
           { label: t.about.stats.countries, value: '12' },
           { label: t.about.stats.years, value: '8' },
           { label: t.about.stats.smiles, value: '100%' }
         ].map((stat, i) => (
-          <div key={i} className="text-center group relative p-8">
+          <div key={i} className="text-center group relative p-4 sm:p-8">
             <div className="absolute inset-0 marble-texture opacity-0 group-hover:opacity-5 transition-opacity duration-700 rounded-3xl -z-10" />
-            <span className="text-5xl font-display font-bold text-panda-gold block mb-4 transform group-hover:scale-110 transition-transform duration-500">{stat.value}</span>
-            <span className="text-[10px] uppercase tracking-[0.4em] text-panda-black/60 dark:text-panda-white/40 font-bold">{stat.label}</span>
+            <span className="text-3xl sm:text-5xl font-display font-bold text-panda-gold block mb-2 sm:mb-4 transform group-hover:scale-110 transition-transform duration-500">{stat.value}</span>
+            <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.4em] text-panda-black/60 dark:text-panda-white/40 font-bold">{stat.label}</span>
           </div>
         ))}
       </div>

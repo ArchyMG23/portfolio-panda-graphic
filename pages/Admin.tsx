@@ -472,7 +472,7 @@ const Admin: React.FC<AdminProps> = ({
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-20 animate-in fade-in duration-700 relative z-10">
+    <div className="max-w-7xl mx-auto px-6 pt-28 md:pt-36 pb-20 animate-in fade-in duration-700 relative z-10">
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-16">
         <div className="flex items-center space-x-6">
           <div className="p-4 bg-panda-green/20 text-panda-green rounded-2xl border border-panda-green/30">
@@ -505,7 +505,7 @@ const Admin: React.FC<AdminProps> = ({
 
       {tab === 'projects' && (
         <div className="space-y-12">
-          <div className="bg-panda-black/5 dark:bg-panda-white/5 border border-panda-black/10 dark:border-panda-white/10 p-10 rounded-[2.5rem]">
+          <div className="bg-panda-black/5 dark:bg-panda-white/5 border border-panda-black/10 dark:border-panda-white/10 p-5 sm:p-10 rounded-[1.5rem] sm:rounded-[2.5rem]">
             <h3 className="text-2xl font-display font-bold mb-8 flex items-center space-x-3 uppercase tracking-tighter text-panda-black dark:text-panda-white">
               <Plus size={24} className="text-panda-gold" /> 
               <span>{editingProject ? (lang === 'fr' ? 'Modifier le projet' : 'Edit Project') : t.admin.addProject}</span>
@@ -681,7 +681,7 @@ const Admin: React.FC<AdminProps> = ({
 
       {tab === 'blog' && (
         <div className="space-y-12">
-          <div className="bg-panda-black/5 dark:bg-panda-white/5 border border-panda-black/10 dark:border-panda-white/10 p-10 rounded-[2.5rem]">
+          <div className="bg-panda-black/5 dark:bg-panda-white/5 border border-panda-black/10 dark:border-panda-white/10 p-5 sm:p-10 rounded-[1.5rem] sm:rounded-[2.5rem]">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
                <h3 className="text-2xl font-display font-bold flex items-center space-x-3 uppercase tracking-tighter text-panda-black dark:text-panda-white">
                  <BookOpen size={24} className="text-panda-gold" /> 
@@ -807,7 +807,7 @@ const Admin: React.FC<AdminProps> = ({
       {tab === 'settings' && (
         <div className="max-w-2xl mx-auto space-y-12 animate-in slide-in-from-bottom-10 duration-700">
           {/* Testimonials Management */}
-          <div className="bg-panda-white/5 dark:bg-panda-white/5 backdrop-blur-xl rounded-[3rem] p-12 border border-panda-black/10 dark:border-panda-white/10">
+          <div className="bg-panda-white/5 dark:bg-panda-white/5 backdrop-blur-xl rounded-[1.5rem] sm:rounded-[3rem] p-6 sm:p-12 border border-panda-black/10 dark:border-panda-white/10">
             <div className="flex items-center gap-3 mb-8">
               <div className="w-12 h-12 rounded-2xl bg-panda-gold/20 flex items-center justify-center">
                 <MessageCircle className="text-panda-gold" size={24} />
@@ -896,7 +896,7 @@ const Admin: React.FC<AdminProps> = ({
             </div>
           </div>
 
-          <div className="bg-panda-black/5 dark:bg-panda-white/5 border border-panda-black/10 dark:border-panda-white/10 rounded-[3rem] p-12 backdrop-blur-xl">
+          <div className="bg-panda-black/5 dark:bg-panda-white/5 border border-panda-black/10 dark:border-panda-white/10 rounded-[1.5rem] sm:rounded-[3rem] p-6 sm:p-12 backdrop-blur-xl">
             <h2 className="text-2xl font-display font-bold mb-8 uppercase tracking-tighter text-panda-black dark:text-panda-white flex items-center gap-4">
               <Settings className="text-panda-gold" /> {t.admin.siteSettings}
             </h2>
