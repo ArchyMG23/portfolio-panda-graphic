@@ -29,7 +29,7 @@ const About: React.FC<{ lang: Language; settings?: AppSettings }> = ({ lang, set
             <img 
               src={image} 
               alt={title} 
-              className="w-full h-full object-cover grayscale hover:grayscale-0 hover:brightness-110 transition-all duration-[1500ms] ease-in-out transform hover:scale-105"
+              className="w-full h-full object-cover grayscale hover:grayscale-0 hover:brightness-110 transition-all duration-[6000ms] ease-in-out transform hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-panda-black/60 to-transparent" />
             <div className="absolute bottom-10 left-10">

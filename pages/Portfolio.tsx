@@ -116,14 +116,14 @@ const Portfolio: React.FC<PortfolioProps> = ({ lang, projects }) => {
                      loop 
                      muted 
                      playsInline
-                     className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:brightness-110 transform group-hover:scale-110 transition-all duration-[1500ms] ease-in-out"
+                     className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:brightness-110 transform group-hover:scale-110 transition-all duration-[6000ms] ease-in-out"
                    />
                  ) : (
                    <img 
                      src={project.image} 
                      alt={project.title[lang]} 
                      loading="lazy"
-                     className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:brightness-110 transform group-hover:scale-110 transition-all duration-[1500ms] ease-in-out"
+                     className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:brightness-110 transform group-hover:scale-110 transition-all duration-[6000ms] ease-in-out"
                    />
                  )}
                 <div className="absolute top-6 left-6 p-2 bg-panda-black/50 backdrop-blur-md rounded-lg border border-panda-white/10 text-panda-gold">

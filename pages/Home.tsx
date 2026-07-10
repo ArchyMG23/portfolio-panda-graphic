@@ -144,8 +144,8 @@ const Home: React.FC<HomeProps> = ({ lang, projects, posts, testimonials, settin
         <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
           <div className="relative group">
             <div className="absolute -inset-4 border border-panda-gold/30 rounded-[3rem] group-hover:translate-x-4 group-hover:translate-y-4 transition-transform duration-700" />
-            <div className="aspect-square rounded-[3rem] overflow-hidden border-2 border-panda-black/10 dark:border-panda-white/10 group-hover:border-panda-gold shadow-2xl transition-all duration-[1500ms] ease-in-out">
-              <img src={homeAboutImage} alt={homeAboutTitle} className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:brightness-110 transform group-hover:scale-105 transition-all duration-[1500ms] ease-in-out" />
+            <div className="aspect-square rounded-[3rem] overflow-hidden border-2 border-panda-black/10 dark:border-panda-white/10 group-hover:border-panda-gold shadow-2xl transition-all duration-[6000ms] ease-in-out">
+              <img src={homeAboutImage} alt={homeAboutTitle} className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:brightness-110 transform group-hover:scale-105 transition-all duration-[6000ms] ease-in-out" />
             </div>
           </div>
           <div className="space-y-6 sm:space-y-8">

@@ -137,13 +137,13 @@ const Blog: React.FC<BlogProps> = ({ lang, posts, onUpdatePost, isAdmin }) => {
                     loop 
                     muted 
                     playsInline 
-                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:brightness-110 transform group-hover:scale-105 transition-all duration-[1500ms] ease-in-out"
+                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:brightness-110 transform group-hover:scale-105 transition-all duration-[6000ms] ease-in-out"
                   />
                 ) : (
                   <img 
                     src={post.image} 
                     alt={post.title[lang]} 
-                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:brightness-110 transform group-hover:scale-105 transition-all duration-[1500ms] ease-in-out"
+                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:brightness-110 transform group-hover:scale-105 transition-all duration-[6000ms] ease-in-out"
                   />
                 )}
                 <div className="absolute top-6 right-6 p-3 bg-panda-black/40 backdrop-blur-md rounded-2xl border border-white/10 text-panda-gold">

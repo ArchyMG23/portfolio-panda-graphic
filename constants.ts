@@ -20,7 +20,7 @@ export const TRANSLATIONS = {
     home: {
       creativeSpirit: 'L\'Esprit Créatif',
       aboutQuote: '"Le design n\'est pas ce que je fais, c\'est ce que je suis. Chaque projet est une extension de ma vision pour un monde plus élégant."',
-      aboutBio: 'Designer graphique basé à Paris, j\'accompagne les marques visionnaires dans la création d\'identités mémorables.',
+      aboutBio: 'Designer graphique basé au Cameroun, j\'accompagne les marques visionnaires dans la création d\'identités mémorables.',
       discoverPath: 'Découvrir mon parcours',
       expertiseTitle: 'Nos Domaines d\'Action',
       expertiseSubtitle: 'Expertise Premium',
@@ -246,7 +246,7 @@ export const TRANSLATIONS = {
     home: {
       creativeSpirit: 'Creative Spirit',
       aboutQuote: '"Design is not what I do, it is who I am. Each project is an extension of my vision for a more elegant world."',
-      aboutBio: 'Graphic designer based in Paris, I accompany visionary brands in creating memorable identities.',
+      aboutBio: 'Graphic designer based in Cameroon, I accompany visionary brands in creating memorable identities.',
       discoverPath: 'Discover my journey',
       expertiseTitle: 'Our Areas of Action',
       expertiseSubtitle: 'Premium Expertise',
@@ -472,7 +472,7 @@ export const TRANSLATIONS = {
     home: {
       creativeSpirit: 'Kreativer Geist',
       aboutQuote: '"Design ist nicht das, was ich tue, es ist das, was ich bin. Jedes Projekt ist eine Erweiterung meiner Vision für eine elegantere Welt."',
-      aboutBio: 'Grafikdesigner mit Sitz in Paris, ich begleite visionäre Marken bei der Schaffung unvergesslicher Identitäten.',
+      aboutBio: 'Grafikdesigner mit Sitz in Kamerun, ich begleite visionäre Marken bei der Schaffung unvergesslicher Identitäten.',
       discoverPath: 'Entdecken Sie meine Reise',
       expertiseTitle: 'Unsere Handlungsfelder',
       expertiseSubtitle: 'Premium-Expertise',
