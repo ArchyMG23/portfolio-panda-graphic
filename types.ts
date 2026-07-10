@@ -11,6 +11,11 @@ export enum ProjectCategory {
   UIUX = 'UI/UX Web Design'
 }
 
+export interface ProjectMedia {
+  url: string;
+  type: 'image' | 'video';
+}
+
 export interface Project {
   id: string;
   title: { fr: string; en: string; de: string };
@@ -21,6 +26,7 @@ export interface Project {
   problem: { fr: string; en: string; de: string };
   solution: { fr: string; en: string; de: string };
   caseStudy: { fr: string; en: string; de: string };
+  gallery?: ProjectMedia[];
 }
 
 export interface Testimonial {

@@ -7,7 +7,7 @@ import {
   ArrowRight, Upload, ImageIcon, Film, X, FileText, CheckCircle, Clock, User,
   Heart, MessageCircle, Settings, Pencil
 } from 'lucide-react';
-import { Project, BlogPost, Appointment, ProjectCategory, Language, AppSettings, Testimonial } from '../types';
+import { Project, BlogPost, Appointment, ProjectCategory, Language, AppSettings, Testimonial, ProjectMedia } from '../types';
 import { CATEGORIES, TRANSLATIONS } from '../constants';
 
 interface AdminProps {
@@ -68,6 +68,7 @@ const Admin: React.FC<AdminProps> = ({
   const [newProjectSolution, setNewProjectSolution] = useState('');
   const [newProjectCaseStudy, setNewProjectCaseStudy] = useState('');
   const [newProjectCategory, setNewProjectCategory] = useState<ProjectCategory>(ProjectCategory.GALLERY);
+  const [galleryMedia, setGalleryMedia] = useState<ProjectMedia[]>([]);
   
   // Testimonial form states
   const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null);
@@ -79,6 +80,7 @@ const Admin: React.FC<AdminProps> = ({
   const [previewMedia, setPreviewMedia] = useState<string | null>(null);
   const [mediaType, setMediaType] = useState<'image' | 'video'>('image');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const galleryFileInputRef = useRef<HTMLInputElement>(null);
 
   // Blog form states
   const [blogTitle, setBlogTitle] = useState('');
@@ -210,7 +212,9 @@ const Admin: React.FC<AdminProps> = ({
     setNewProjectCaseStudy('');
     setPreviewMedia(null);
     setEditingProject(null);
+    setGalleryMedia([]);
     if (fileInputRef.current) fileInputRef.current.value = '';
+    if (galleryFileInputRef.current) galleryFileInputRef.current.value = '';
   };
 
   const handleEditProject = (p: Project) => {
@@ -223,10 +227,63 @@ const Admin: React.FC<AdminProps> = ({
     setNewProjectCategory(p.category);
     setPreviewMedia(p.image);
     setMediaType(p.mediaType || 'image');
+    setGalleryMedia(p.gallery || []);
   };
 
   const handleCancelEditProject = () => {
     resetProjectForm();
+  };
+
+  const handleGalleryFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const newItems: ProjectMedia[] = [];
+      
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const isVideo = file.type.startsWith('video/');
+        
+        if (isVideo) {
+          if (file.size > 600 * 1024) {
+            alert(lang === 'fr' 
+              ? `Le fichier vidéo "${file.name}" est trop volumineux (max 600 Ko).`
+              : `The video file "${file.name}" is too large (max 600KB).`);
+            continue;
+          }
+          
+          const dataUrl = await new Promise<string>((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.readAsDataURL(file);
+          });
+          
+          newItems.push({ url: dataUrl, type: 'video' });
+        } else {
+          try {
+            const compressed = await compressImage(file, 800, 800, 0.6);
+            newItems.push({ url: compressed, type: 'image' });
+          } catch (err) {
+            console.error("Compression error for gallery file:", err);
+            const dataUrl = await new Promise<string>((resolve) => {
+              const reader = new FileReader();
+              reader.onloadend = () => resolve(reader.result as string);
+              reader.readAsDataURL(file);
+            });
+            newItems.push({ url: dataUrl, type: 'image' });
+          }
+        }
+      }
+      
+      if (newItems.length > 0) {
+        setGalleryMedia(prev => [...prev, ...newItems]);
+      }
+      
+      if (e.target) e.target.value = '';
+    }
+  };
+
+  const handleRemoveGalleryItem = (index: number) => {
+    setGalleryMedia(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleEditTestimonial = (t: Testimonial) => {
@@ -300,7 +357,8 @@ const Admin: React.FC<AdminProps> = ({
           description: { fr: newProjectDesc, en: newProjectDesc, de: newProjectDesc },
           problem: { fr: newProjectProblem, en: newProjectProblem, de: newProjectProblem },
           solution: { fr: newProjectSolution, en: newProjectSolution, de: newProjectSolution },
-          caseStudy: { fr: newProjectCaseStudy, en: newProjectCaseStudy, de: newProjectCaseStudy }
+          caseStudy: { fr: newProjectCaseStudy, en: newProjectCaseStudy, de: newProjectCaseStudy },
+          gallery: galleryMedia
         };
         onUpdateProject(updated);
         setEditingProject(null);
@@ -314,7 +372,8 @@ const Admin: React.FC<AdminProps> = ({
           description: { fr: newProjectDesc, en: newProjectDesc, de: newProjectDesc },
           problem: { fr: newProjectProblem, en: newProjectProblem, de: newProjectProblem },
           solution: { fr: newProjectSolution, en: newProjectSolution, de: newProjectSolution },
-          caseStudy: { fr: newProjectCaseStudy, en: newProjectCaseStudy, de: newProjectCaseStudy }
+          caseStudy: { fr: newProjectCaseStudy, en: newProjectCaseStudy, de: newProjectCaseStudy },
+          gallery: galleryMedia
         };
         onAddProject(project);
       }
@@ -514,22 +573,80 @@ const Admin: React.FC<AdminProps> = ({
                   )}
                 </div>
               </div>
-              <div className="flex flex-col">
-                <input type="file" ref={fileInputRef} className="hidden" accept="image/*,video/*" onChange={(e) => handleFileChange(e, 'project')} />
-                <div onClick={() => fileInputRef.current?.click()} className="flex-1 border-2 border-dashed border-panda-white/10 rounded-[2.5rem] flex items-center justify-center bg-panda-black/30 overflow-hidden relative cursor-pointer hover:border-panda-gold/50 transition-all group">
-                   {previewMedia ? (
-                     <div className="w-full h-full relative">
-                        {mediaType === 'image' ? <img src={previewMedia} className="w-full h-full object-cover" /> : <video src={previewMedia} className="w-full h-full object-cover" />}
-                        <div className="absolute inset-0 bg-panda-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                           <Upload className="text-panda-gold" size={48} />
+              <div className="flex flex-col space-y-6">
+                <div>
+                  <label className="text-xs uppercase font-black tracking-widest text-panda-black/60 dark:text-panda-white/60 mb-2 block">
+                    {lang === 'fr' ? "Média principal (Couverture)" : "Main Media (Cover)"}
+                  </label>
+                  <input type="file" ref={fileInputRef} className="hidden" accept="image/*,video/*" onChange={(e) => handleFileChange(e, 'project')} />
+                  <div onClick={() => fileInputRef.current?.click()} className="h-[320px] border-2 border-dashed border-panda-black/10 dark:border-panda-white/10 rounded-[2.5rem] flex items-center justify-center bg-panda-black/30 overflow-hidden relative cursor-pointer hover:border-panda-gold/50 transition-all group">
+                     {previewMedia ? (
+                       <div className="w-full h-full relative">
+                          {mediaType === 'image' ? <img src={previewMedia} className="w-full h-full object-cover" /> : <video src={previewMedia} className="w-full h-full object-cover" />}
+                          <div className="absolute inset-0 bg-panda-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                             <Upload className="text-panda-gold" size={48} />
+                          </div>
+                       </div>
+                     ) : (
+                       <div className="text-center opacity-30 uppercase font-black tracking-widest text-[10px] space-y-4">
+                          <ImageIcon size={48} className="mx-auto mb-4" />
+                          <div>{t.admin.clickToLoadMedia}</div>
+                       </div>
+                     )}
+                  </div>
+                </div>
+
+                {/* Galerie d'images et vidéos supplémentaires */}
+                <div className="pt-6 border-t border-panda-black/10 dark:border-panda-white/10">
+                  <div className="flex items-center justify-between mb-4">
+                    <label className="text-xs uppercase font-black tracking-widest text-panda-black/60 dark:text-panda-white/60">
+                      {lang === 'fr' ? 'Médias de la Galerie (Images & Vidéos)' : 'Gallery Media (Images & Videos)'}
+                    </label>
+                    <button 
+                      type="button"
+                      onClick={() => galleryFileInputRef.current?.click()}
+                      className="text-xs bg-panda-gold/10 hover:bg-panda-gold/20 text-panda-gold font-bold px-4 py-2 rounded-xl transition-all flex items-center gap-1 uppercase tracking-wider animate-pulse-slow"
+                    >
+                      <Plus size={14} />
+                      {lang === 'fr' ? 'Ajouter' : 'Add'}
+                    </button>
+                  </div>
+                  
+                  <input 
+                    type="file" 
+                    ref={galleryFileInputRef} 
+                    className="hidden" 
+                    accept="image/*,video/*" 
+                    multiple 
+                    onChange={handleGalleryFileChange} 
+                  />
+
+                  {galleryMedia.length > 0 ? (
+                    <div className="grid grid-cols-4 gap-4 p-4 bg-panda-black/10 dark:bg-panda-black/40 rounded-[2rem] border border-panda-black/10 dark:border-panda-white/5 max-h-[220px] overflow-y-auto no-scrollbar">
+                      {galleryMedia.map((media, idx) => (
+                        <div key={idx} className="aspect-square rounded-2xl overflow-hidden relative border border-panda-white/10 group/item bg-panda-black">
+                          {media.type === 'image' ? (
+                            <img src={media.url} className="w-full h-full object-cover animate-fade-in" referrerPolicy="no-referrer" />
+                          ) : (
+                            <video src={media.url} className="w-full h-full object-cover animate-fade-in" muted playsInline />
+                          )}
+                          <button 
+                            type="button"
+                            onClick={() => handleRemoveGalleryItem(idx)}
+                            className="absolute top-2 right-2 p-1.5 bg-red-500 hover:bg-red-600 text-white rounded-full transition-all shadow-md"
+                          >
+                            <X size={12} />
+                          </button>
                         </div>
-                     </div>
-                   ) : (
-                     <div className="text-center opacity-30 uppercase font-black tracking-widest text-[10px] space-y-4">
-                        <ImageIcon size={48} className="mx-auto mb-4" />
-                        <div>{t.admin.clickToLoadMedia}</div>
-                     </div>
-                   )}
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-10 border border-dashed border-panda-black/10 dark:border-panda-white/10 rounded-[2rem] bg-panda-black/5 dark:bg-panda-black/20">
+                      <p className="text-xs text-panda-black/40 dark:text-panda-white/40 font-light">
+                        {lang === 'fr' ? 'Aucun média supplémentaire' : 'No extra media added yet'}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

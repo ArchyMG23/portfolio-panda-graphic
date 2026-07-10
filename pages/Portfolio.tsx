@@ -16,6 +16,11 @@ const Portfolio: React.FC<PortfolioProps> = ({ lang, projects }) => {
   const [activeCategory, setActiveCategory] = useState<ProjectCategory>(ProjectCategory.ALL);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeMediaIndex, setActiveMediaIndex] = useState(0);
+
+  useEffect(() => {
+    setActiveMediaIndex(0);
+  }, [selectedProject]);
 
   const t = TRANSLATIONS[lang];
 
@@ -164,29 +169,72 @@ const Portfolio: React.FC<PortfolioProps> = ({ lang, projects }) => {
             </button>
 
             {/* Left: Media */}
-            <div className="w-full lg:w-1/2 bg-panda-black/5 dark:bg-panda-black/50 border-r border-panda-black/5 dark:border-panda-white/5 relative">
-              {selectedProject.mediaType === 'video' ? (
-                <video 
-                  src={selectedProject.image} 
-                  autoPlay 
-                  loop 
-                  muted 
-                  playsInline 
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <img 
-                  src={selectedProject.image} 
-                  alt={selectedProject.title[lang]} 
-                  className="w-full h-full object-cover"
-                />
-              )}
-              <div className="absolute bottom-8 left-8">
-                 <div className="bg-panda-gold text-panda-black px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest shadow-xl">
-                    {getCategoryLabel(selectedProject.category)}
-                 </div>
-              </div>
-            </div>
+            {(() => {
+              const projectMediaList = selectedProject ? [
+                { url: selectedProject.image, type: selectedProject.mediaType },
+                ...(selectedProject.gallery || [])
+              ] : [];
+              const currentMedia = projectMediaList[activeMediaIndex] || { url: selectedProject.image, type: selectedProject.mediaType };
+              
+              return (
+                <div className="w-full lg:w-1/2 bg-panda-black/5 dark:bg-panda-black/50 border-r border-panda-black/5 dark:border-panda-white/5 relative flex flex-col justify-between h-[450px] lg:h-auto overflow-hidden">
+                  <div className="flex-1 w-full h-full relative overflow-hidden bg-black/40 flex items-center justify-center">
+                    {currentMedia.type === 'video' ? (
+                      <video 
+                        key={activeMediaIndex}
+                        src={currentMedia.url} 
+                        autoPlay 
+                        loop 
+                        muted 
+                        playsInline 
+                        className="w-full h-full object-contain"
+                      />
+                    ) : (
+                      <img 
+                        key={activeMediaIndex}
+                        src={currentMedia.url} 
+                        alt={selectedProject.title[lang]} 
+                        className="w-full h-full object-contain"
+                      />
+                    )}
+                    
+                    {/* Category Badge */}
+                    <div className="absolute top-8 left-8 z-10">
+                       <div className="bg-panda-gold text-panda-black px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest shadow-xl">
+                          {getCategoryLabel(selectedProject.category)}
+                       </div>
+                    </div>
+                  </div>
+
+                  {projectMediaList.length > 1 && (
+                    <div className="p-4 bg-panda-black/90 backdrop-blur-md border-t border-panda-white/10 flex gap-3 overflow-x-auto no-scrollbar justify-center">
+                      {projectMediaList.map((media, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => setActiveMediaIndex(idx)}
+                          className={`relative w-16 h-16 rounded-xl overflow-hidden border-2 transition-all shrink-0 ${
+                            activeMediaIndex === idx 
+                              ? 'border-panda-gold scale-105 shadow-lg shadow-panda-gold/20' 
+                              : 'border-transparent opacity-60 hover:opacity-100'
+                          }`}
+                        >
+                          {media.type === 'image' ? (
+                            <img src={media.url} className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full relative">
+                              <video src={media.url} className="w-full h-full object-cover" muted playsInline />
+                              <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                                <Film size={12} className="text-white" />
+                              </div>
+                            </div>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
 
             {/* Right: Content */}
             <div className="w-full lg:w-1/2 p-12 md:p-20 overflow-y-auto custom-scrollbar">
