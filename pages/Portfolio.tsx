@@ -110,22 +110,22 @@ const Portfolio: React.FC<PortfolioProps> = ({ lang, projects }) => {
             >
               <div className="aspect-square overflow-hidden relative">
                 {project.mediaType === 'video' ? (
-                  <video 
-                    src={project.image} 
-                    autoPlay 
-                    loop 
-                    muted 
-                    playsInline
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                ) : (
-                  <img 
-                    src={project.image} 
-                    alt={project.title[lang]} 
-                    loading="lazy"
-                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110"
-                  />
-                )}
+                   <video 
+                     src={project.image} 
+                     autoPlay 
+                     loop 
+                     muted 
+                     playsInline
+                     className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:brightness-110 transform group-hover:scale-110 transition-all duration-[1500ms] ease-in-out"
+                   />
+                 ) : (
+                   <img 
+                     src={project.image} 
+                     alt={project.title[lang]} 
+                     loading="lazy"
+                     className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:brightness-110 transform group-hover:scale-110 transition-all duration-[1500ms] ease-in-out"
+                   />
+                 )}
                 <div className="absolute top-6 left-6 p-2 bg-panda-black/50 backdrop-blur-md rounded-lg border border-panda-white/10 text-panda-gold">
                   {project.mediaType === 'video' ? <Film size={16} /> : <ImageIcon size={16} />}
                 </div>

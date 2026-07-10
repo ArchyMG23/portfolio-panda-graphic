@@ -25,7 +25,7 @@ const Home: React.FC<HomeProps> = ({ lang, projects, posts, testimonials, settin
   const heroCta = settings?.hero?.cta?.[lang] || t.hero.cta;
   const heroConsultation = settings?.hero?.consultation?.[lang] || t.hero.consultation;
 
-  const homeAboutImage = settings?.homeAbout?.image || "https://picsum.photos/seed/victor_arch/800/800";
+  const homeAboutImage = settings?.homeAbout?.image || settings?.about?.image || "https://picsum.photos/seed/victor/800/1000";
   const homeAboutTag = settings?.homeAbout?.tag?.[lang] || t.home.creativeSpirit;
   const homeAboutTitle = settings?.homeAbout?.title?.[lang] || "Victor Gabriel Archange";
   const homeAboutQuote = settings?.homeAbout?.quote?.[lang] || t.home.aboutQuote;
@@ -144,8 +144,8 @@ const Home: React.FC<HomeProps> = ({ lang, projects, posts, testimonials, settin
         <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
           <div className="relative group">
             <div className="absolute -inset-4 border border-panda-gold/30 rounded-[3rem] group-hover:translate-x-4 group-hover:translate-y-4 transition-transform duration-700" />
-            <div className="aspect-square rounded-[3rem] overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-1000 border-2 border-panda-black/10 dark:border-panda-white/10 group-hover:border-panda-gold shadow-2xl">
-              <img src={homeAboutImage} alt={homeAboutTitle} className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-1000" />
+            <div className="aspect-square rounded-[3rem] overflow-hidden border-2 border-panda-black/10 dark:border-panda-white/10 group-hover:border-panda-gold shadow-2xl transition-all duration-[1500ms] ease-in-out">
+              <img src={homeAboutImage} alt={homeAboutTitle} className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:brightness-110 transform group-hover:scale-105 transition-all duration-[1500ms] ease-in-out" />
             </div>
           </div>
           <div className="space-y-6 sm:space-y-8">

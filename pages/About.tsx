@@ -29,7 +29,7 @@ const About: React.FC<{ lang: Language; settings?: AppSettings }> = ({ lang, set
             <img 
               src={image} 
               alt={title} 
-              className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000 transform hover:scale-105"
+              className="w-full h-full object-cover grayscale hover:grayscale-0 hover:brightness-110 transition-all duration-[1500ms] ease-in-out transform hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-panda-black/60 to-transparent" />
             <div className="absolute bottom-10 left-10">
@@ -75,21 +75,6 @@ const About: React.FC<{ lang: Language; settings?: AppSettings }> = ({ lang, set
         ))}
       </div>
 
-      {/* Stats Section with Marble Accents */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-12 border-t border-panda-black/10 dark:border-panda-white/10 pt-10 sm:pt-20 reveal">
-        {[
-          { label: t.about.stats.projects, value: '150+' },
-          { label: t.about.stats.countries, value: '12' },
-          { label: t.about.stats.years, value: '8' },
-          { label: t.about.stats.smiles, value: '100%' }
-        ].map((stat, i) => (
-          <div key={i} className="text-center group relative p-4 sm:p-8">
-            <div className="absolute inset-0 marble-texture opacity-0 group-hover:opacity-5 transition-opacity duration-700 rounded-3xl -z-10" />
-            <span className="text-3xl sm:text-5xl font-display font-bold text-panda-gold block mb-2 sm:mb-4 transform group-hover:scale-110 transition-transform duration-500">{stat.value}</span>
-            <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.4em] text-panda-black/60 dark:text-panda-white/40 font-bold">{stat.label}</span>
-          </div>
-        ))}
-      </div>
     </div>
   );
 };
