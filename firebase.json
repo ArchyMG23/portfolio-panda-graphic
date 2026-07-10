@@ -1,0 +1,8 @@
+{
+  "firestore": [
+    {
+      "database": "ai-studio-pandagraphicport-b4584d93-cd08-43e9-9f39-929e23bc3c87",
+      "rules": "firestore.rules"
+    }
+  ]
+}

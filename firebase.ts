@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { initializeFirestore } from "firebase/firestore";
 import config from "./firebase-applet-config.json";
 
 const firebaseConfig = {
@@ -14,7 +14,10 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-// If firestoreDatabaseId is specified and is not empty, use it. Otherwise, default.
-export const db = config.firestoreDatabaseId && config.firestoreDatabaseId !== "(default)"
-  ? getFirestore(app, config.firestoreDatabaseId)
-  : getFirestore(app);
+const databaseId = config.firestoreDatabaseId && config.firestoreDatabaseId !== "(default)"
+  ? config.firestoreDatabaseId
+  : undefined;
+
+export const db = initializeFirestore(app, {
+  experimentalForceLongPolling: true,
+}, databaseId);

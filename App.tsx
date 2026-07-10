@@ -88,11 +88,12 @@ const NavLinks: React.FC<{ lang: Language; t: any; setIsMenuOpen: (o: boolean) =
 };
 
 const App: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [lang, setLang] = useState<Language>('fr');
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
-  const [projects, setProjects] = useState<Project[]>(INITIAL_PROJECTS);
-  const [posts, setPosts] = useState<BlogPost[]>(INITIAL_POSTS);
-  const [testimonials, setTestimonials] = useState<Testimonial[]>(INITIAL_TESTIMONIALS);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [settings, setSettings] = useState<AppSettings>({
     socialLinks: {
@@ -123,13 +124,18 @@ const App: React.FC = () => {
           getSettingsFromDb()
         ]);
         
-        setProjects(projList);
-        setPosts(postList);
-        setTestimonials(testList);
+        setProjects(projList && projList.length > 0 ? projList : INITIAL_PROJECTS);
+        setPosts(postList && postList.length > 0 ? postList : INITIAL_POSTS);
+        setTestimonials(testList && testList.length > 0 ? testList : INITIAL_TESTIMONIALS);
         setAppointments(apptList);
         setSettings(settObj);
       } catch (error) {
-        console.error("Error loading data from Firestore:", error);
+        console.error("Error loading data from Firestore, falling back to static constants:", error);
+        setProjects(INITIAL_PROJECTS);
+        setPosts(INITIAL_POSTS);
+        setTestimonials(INITIAL_TESTIMONIALS);
+      } finally {
+        setIsLoading(false);
       }
     };
     loadAllData();
@@ -361,9 +367,66 @@ const App: React.FC = () => {
   return (
     <Router>
       <ScrollToTop />
-      <div className={`min-h-screen font-sans transition-colors duration-500 selection:bg-panda-gold selection:text-panda-black ${
-        theme === 'dark' ? 'bg-panda-black text-panda-white' : 'bg-white text-panda-black'
-      }`}>
+      <AnimatePresence mode="wait">
+        {isLoading ? (
+          <motion.div
+            key="loader"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0, transition: { duration: 0.5, ease: "easeInOut" } }}
+            className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-panda-black text-panda-white"
+          >
+            <div className="relative flex flex-col items-center">
+              {/* Spinning stylized border */}
+              <motion.div
+                animate={{
+                  rotate: 360,
+                  borderRadius: ["40% 60% 70% 30% / 40% 50% 60% 50%", "70% 30% 52% 48% / 60% 40% 60% 40%", "40% 60% 70% 30% / 40% 50% 60% 50%"]
+                }}
+                transition={{
+                  rotate: { duration: 6, repeat: Infinity, ease: "linear" },
+                  borderRadius: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                }}
+                className="w-24 h-24 border-2 border-dashed border-panda-gold absolute"
+              />
+              {/* Pulsing inner branding icon */}
+              <motion.div
+                animate={{ scale: [0.95, 1.05, 0.95] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                className="w-20 h-20 bg-panda-gold rounded-full flex items-center justify-center text-panda-black font-black text-3xl shadow-2xl shadow-panda-gold/20"
+              >
+                P
+              </motion.div>
+              
+              {/* Text shimmer and title reveal */}
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.8 }}
+                className="mt-8 flex flex-col items-center"
+              >
+                <h2 className="font-display text-2xl font-bold tracking-[0.3em] uppercase text-panda-white">
+                  PANDA<span className="text-panda-gold">_</span>GRAPHIC
+                </h2>
+                <div className="mt-4 w-32 h-[1px] bg-panda-white/10 relative overflow-hidden">
+                  <motion.div 
+                    animate={{ x: ["-100%", "100%"] }}
+                    transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute top-0 left-0 h-full w-1/2 bg-gradient-to-r from-transparent via-panda-gold to-transparent"
+                  />
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div 
+            key="content"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className={`min-h-screen font-sans transition-colors duration-500 selection:bg-panda-gold selection:text-panda-black ${
+              theme === 'dark' ? 'bg-panda-black text-panda-white' : 'bg-white text-panda-black'
+            }`}
+          >
         {/* Navigation */}
         <motion.nav 
           initial={{ y: -100 }}
@@ -572,7 +635,9 @@ const App: React.FC = () => {
             </div>
           </div>
         </footer>
-      </div>
+      </motion.div>
+      )}
+      </AnimatePresence>
     </Router>
   );
 };
