@@ -516,12 +516,14 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            <button 
-              className={`md:hidden p-3 rounded-full transition-all text-panda-black dark:text-panda-white ${scrolled ? 'bg-panda-black/5 dark:bg-panda-white/5' : 'bg-transparent'}`} 
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+            {!isMenuOpen && (
+              <button 
+                className={`md:hidden p-3 rounded-full transition-all text-panda-black dark:text-panda-white ${scrolled ? 'bg-panda-black/5 dark:bg-panda-white/5' : 'bg-transparent'}`} 
+                onClick={() => setIsMenuOpen(true)}
+              >
+                <Menu size={24} />
+              </button>
+            )}
           </div>
         </motion.nav>
 
@@ -596,7 +598,7 @@ const App: React.FC = () => {
 
         <main className="min-h-screen">
           <Routes>
-            <Route path="/" element={<Home lang={lang} projects={projects} posts={posts} testimonials={testimonials} />} />
+            <Route path="/" element={<Home lang={lang} projects={projects} posts={posts} testimonials={testimonials} settings={settings} />} />
             <Route path="/portfolio" element={<Portfolio lang={lang} projects={projects} />} />
             <Route path="/services" element={<Services lang={lang} settings={settings} />} />
             <Route path="/about" element={<About lang={lang} settings={settings} />} />

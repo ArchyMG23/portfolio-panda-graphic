@@ -88,6 +88,45 @@ export interface AppSettings {
     title: { fr: string; en: string; de: string };
     headerDesc: { fr: string; en: string; de: string };
   };
+  hero?: {
+    title: { fr: string; en: string; de: string };
+    subtitle: { fr: string; en: string; de: string };
+    cta: { fr: string; en: string; de: string };
+    consultation: { fr: string; en: string; de: string };
+  };
+  homeAbout?: {
+    image: string;
+    tag: { fr: string; en: string; de: string };
+    title: { fr: string; en: string; de: string };
+    quote: { fr: string; en: string; de: string };
+    bio: { fr: string; en: string; de: string };
+    btn: { fr: string; en: string; de: string };
+  };
+  homeServices?: {
+    tag: { fr: string; en: string; de: string };
+    title: { fr: string; en: string; de: string };
+    btn: { fr: string; en: string; de: string };
+  };
+  homePortfolio?: {
+    tag: { fr: string; en: string; de: string };
+    title: { fr: string; en: string; de: string };
+    btn: { fr: string; en: string; de: string };
+  };
+  homeBlog?: {
+    tag: { fr: string; en: string; de: string };
+    title: { fr: string; en: string; de: string };
+    desc: { fr: string; en: string; de: string };
+    btn: { fr: string; en: string; de: string };
+  };
+  homeTestimonials?: {
+    tag: { fr: string; en: string; de: string };
+    title: { fr: string; en: string; de: string };
+  };
+  homeCta?: {
+    title: { fr: string; en: string; de: string };
+    desc: { fr: string; en: string; de: string };
+    btn: { fr: string; en: string; de: string };
+  };
 }
 
 export interface AppState {

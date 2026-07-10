@@ -78,6 +78,97 @@ const Admin: React.FC<AdminProps> = ({
   const [servicesDescDe, setServicesDescDe] = useState(settings.services?.headerDesc?.de || TRANSLATIONS.de.services.headerDesc);
 
   const aboutFileInputRef = useRef<HTMLInputElement>(null);
+  const homeAboutFileInputRef = useRef<HTMLInputElement>(null);
+
+  const [expandedSection, setExpandedSection] = useState<string | null>(null);
+
+  // Dynamic Home Page Settings States
+  // Hero Section
+  const [heroTitleFr, setHeroTitleFr] = useState(settings.hero?.title?.fr || "PANDA_GRAPHIC");
+  const [heroTitleEn, setHeroTitleEn] = useState(settings.hero?.title?.en || "PANDA_GRAPHIC");
+  const [heroTitleDe, setHeroTitleDe] = useState(settings.hero?.title?.de || "PANDA_GRAPHIC");
+  const [heroSubtitleFr, setHeroSubtitleFr] = useState(settings.hero?.subtitle?.fr || TRANSLATIONS.fr.hero.subtitle);
+  const [heroSubtitleEn, setHeroSubtitleEn] = useState(settings.hero?.subtitle?.en || TRANSLATIONS.en.hero.subtitle);
+  const [heroSubtitleDe, setHeroSubtitleDe] = useState(settings.hero?.subtitle?.de || TRANSLATIONS.de.hero.subtitle);
+  const [heroCtaFr, setHeroCtaFr] = useState(settings.hero?.cta?.fr || TRANSLATIONS.fr.hero.cta);
+  const [heroCtaEn, setHeroCtaEn] = useState(settings.hero?.cta?.en || TRANSLATIONS.en.hero.cta);
+  const [heroCtaDe, setHeroCtaDe] = useState(settings.hero?.cta?.de || TRANSLATIONS.de.hero.cta);
+  const [heroConsultationFr, setHeroConsultationFr] = useState(settings.hero?.consultation?.fr || TRANSLATIONS.fr.hero.consultation);
+  const [heroConsultationEn, setHeroConsultationEn] = useState(settings.hero?.consultation?.en || TRANSLATIONS.en.hero.consultation);
+  const [heroConsultationDe, setHeroConsultationDe] = useState(settings.hero?.consultation?.de || TRANSLATIONS.de.hero.consultation);
+
+  // Home About Section
+  const [homeAboutImage, setHomeAboutImage] = useState(settings.homeAbout?.image || "https://picsum.photos/seed/victor_arch/800/800");
+  const [homeAboutTagFr, setHomeAboutTagFr] = useState(settings.homeAbout?.tag?.fr || TRANSLATIONS.fr.home.creativeSpirit);
+  const [homeAboutTagEn, setHomeAboutTagEn] = useState(settings.homeAbout?.tag?.en || TRANSLATIONS.en.home.creativeSpirit);
+  const [homeAboutTagDe, setHomeAboutTagDe] = useState(settings.homeAbout?.tag?.de || TRANSLATIONS.de.home.creativeSpirit);
+  const [homeAboutTitleFr, setHomeAboutTitleFr] = useState(settings.homeAbout?.title?.fr || "Victor Gabriel Archange");
+  const [homeAboutTitleEn, setHomeAboutTitleEn] = useState(settings.homeAbout?.title?.en || "Victor Gabriel Archange");
+  const [homeAboutTitleDe, setHomeAboutTitleDe] = useState(settings.homeAbout?.title?.de || "Victor Gabriel Archange");
+  const [homeAboutQuoteFr, setHomeAboutQuoteFr] = useState(settings.homeAbout?.quote?.fr || TRANSLATIONS.fr.home.aboutQuote);
+  const [homeAboutQuoteEn, setHomeAboutQuoteEn] = useState(settings.homeAbout?.quote?.en || TRANSLATIONS.en.home.aboutQuote);
+  const [homeAboutQuoteDe, setHomeAboutQuoteDe] = useState(settings.homeAbout?.quote?.de || TRANSLATIONS.de.home.aboutQuote);
+  const [homeAboutBioFr, setHomeAboutBioFr] = useState(settings.homeAbout?.bio?.fr || TRANSLATIONS.fr.home.aboutBio);
+  const [homeAboutBioEn, setHomeAboutBioEn] = useState(settings.homeAbout?.bio?.en || TRANSLATIONS.en.home.aboutBio);
+  const [homeAboutBioDe, setHomeAboutBioDe] = useState(settings.homeAbout?.bio?.de || TRANSLATIONS.de.home.aboutBio);
+  const [homeAboutBtnFr, setHomeAboutBtnFr] = useState(settings.homeAbout?.btn?.fr || TRANSLATIONS.fr.home.discoverPath);
+  const [homeAboutBtnEn, setHomeAboutBtnEn] = useState(settings.homeAbout?.btn?.en || TRANSLATIONS.en.home.discoverPath);
+  const [homeAboutBtnDe, setHomeAboutBtnDe] = useState(settings.homeAbout?.btn?.de || TRANSLATIONS.de.home.discoverPath);
+
+  // Home Services Section
+  const [homeServicesTagFr, setHomeServicesTagFr] = useState(settings.homeServices?.tag?.fr || TRANSLATIONS.fr.home.expertiseTitle);
+  const [homeServicesTagEn, setHomeServicesTagEn] = useState(settings.homeServices?.tag?.en || TRANSLATIONS.en.home.expertiseTitle);
+  const [homeServicesTagDe, setHomeServicesTagDe] = useState(settings.homeServices?.tag?.de || TRANSLATIONS.de.home.expertiseTitle);
+  const [homeServicesTitleFr, setHomeServicesTitleFr] = useState(settings.homeServices?.title?.fr || TRANSLATIONS.fr.home.expertiseSubtitle);
+  const [homeServicesTitleEn, setHomeServicesTitleEn] = useState(settings.homeServices?.title?.en || TRANSLATIONS.en.home.expertiseSubtitle);
+  const [homeServicesTitleDe, setHomeServicesTitleDe] = useState(settings.homeServices?.title?.de || TRANSLATIONS.de.home.expertiseSubtitle);
+  const [homeServicesBtnFr, setHomeServicesBtnFr] = useState(settings.homeServices?.btn?.fr || TRANSLATIONS.fr.home.viewServices);
+  const [homeServicesBtnEn, setHomeServicesBtnEn] = useState(settings.homeServices?.btn?.en || TRANSLATIONS.en.home.viewServices);
+  const [homeServicesBtnDe, setHomeServicesBtnDe] = useState(settings.homeServices?.btn?.de || TRANSLATIONS.de.home.viewServices);
+
+  // Home Portfolio Section
+  const [homePortfolioTagFr, setHomePortfolioTagFr] = useState(settings.homePortfolio?.tag?.fr || TRANSLATIONS.fr.home.portfolioSubtitle);
+  const [homePortfolioTagEn, setHomePortfolioTagEn] = useState(settings.homePortfolio?.tag?.en || TRANSLATIONS.en.home.portfolioSubtitle);
+  const [homePortfolioTagDe, setHomePortfolioTagDe] = useState(settings.homePortfolio?.tag?.de || TRANSLATIONS.de.home.portfolioSubtitle);
+  const [homePortfolioTitleFr, setHomePortfolioTitleFr] = useState(settings.homePortfolio?.title?.fr || TRANSLATIONS.fr.home.portfolioTitle);
+  const [homePortfolioTitleEn, setHomePortfolioTitleEn] = useState(settings.homePortfolio?.title?.en || TRANSLATIONS.en.home.portfolioTitle);
+  const [homePortfolioTitleDe, setHomePortfolioTitleDe] = useState(settings.homePortfolio?.title?.de || TRANSLATIONS.de.home.portfolioTitle);
+  const [homePortfolioBtnFr, setHomePortfolioBtnFr] = useState(settings.homePortfolio?.btn?.fr || TRANSLATIONS.fr.home.exploreGallery);
+  const [homePortfolioBtnEn, setHomePortfolioBtnEn] = useState(settings.homePortfolio?.btn?.en || TRANSLATIONS.en.home.exploreGallery);
+  const [homePortfolioBtnDe, setHomePortfolioBtnDe] = useState(settings.homePortfolio?.btn?.de || TRANSLATIONS.de.home.exploreGallery);
+
+  // Home Blog Section
+  const [homeBlogTagFr, setHomeBlogTagFr] = useState(settings.homeBlog?.tag?.fr || TRANSLATIONS.fr.home.blogSubtitle);
+  const [homeBlogTagEn, setHomeBlogTagEn] = useState(settings.homeBlog?.tag?.en || TRANSLATIONS.en.home.blogSubtitle);
+  const [homeBlogTagDe, setHomeBlogTagDe] = useState(settings.homeBlog?.tag?.de || TRANSLATIONS.de.home.blogSubtitle);
+  const [homeBlogTitleFr, setHomeBlogTitleFr] = useState(settings.homeBlog?.title?.fr || TRANSLATIONS.fr.home.blogTitle);
+  const [homeBlogTitleEn, setHomeBlogTitleEn] = useState(settings.homeBlog?.title?.en || TRANSLATIONS.en.home.blogTitle);
+  const [homeBlogTitleDe, setHomeBlogTitleDe] = useState(settings.homeBlog?.title?.de || TRANSLATIONS.de.home.blogTitle);
+  const [homeBlogDescFr, setHomeBlogDescFr] = useState(settings.homeBlog?.desc?.fr || TRANSLATIONS.fr.home.blogDesc);
+  const [homeBlogDescEn, setHomeBlogDescEn] = useState(settings.homeBlog?.desc?.en || TRANSLATIONS.en.home.blogDesc);
+  const [homeBlogDescDe, setHomeBlogDescDe] = useState(settings.homeBlog?.desc?.de || TRANSLATIONS.de.home.blogDesc);
+  const [homeBlogBtnFr, setHomeBlogBtnFr] = useState(settings.homeBlog?.btn?.fr || TRANSLATIONS.fr.home.readArticles);
+  const [homeBlogBtnEn, setHomeBlogBtnEn] = useState(settings.homeBlog?.btn?.en || TRANSLATIONS.en.home.readArticles);
+  const [homeBlogBtnDe, setHomeBlogBtnDe] = useState(settings.homeBlog?.btn?.de || TRANSLATIONS.de.home.readArticles);
+
+  // Home Testimonials Section
+  const [homeTestimonialsTagFr, setHomeTestimonialsTagFr] = useState(settings.homeTestimonials?.tag?.fr || TRANSLATIONS.fr.home.testimonialsTitle);
+  const [homeTestimonialsTagEn, setHomeTestimonialsTagEn] = useState(settings.homeTestimonials?.tag?.en || TRANSLATIONS.en.home.testimonialsTitle);
+  const [homeTestimonialsTagDe, setHomeTestimonialsTagDe] = useState(settings.homeTestimonials?.tag?.de || TRANSLATIONS.de.home.testimonialsTitle);
+  const [homeTestimonialsTitleFr, setHomeTestimonialsTitleFr] = useState(settings.homeTestimonials?.title?.fr || TRANSLATIONS.fr.home.testimonialsSubtitle);
+  const [homeTestimonialsTitleEn, setHomeTestimonialsTitleEn] = useState(settings.homeTestimonials?.title?.en || TRANSLATIONS.en.home.testimonialsSubtitle);
+  const [homeTestimonialsTitleDe, setHomeTestimonialsTitleDe] = useState(settings.homeTestimonials?.title?.de || TRANSLATIONS.de.home.testimonialsSubtitle);
+
+  // Home CTA Section
+  const [homeCtaTitleFr, setHomeCtaTitleFr] = useState(settings.homeCta?.title?.fr || TRANSLATIONS.fr.home.ctaTitle);
+  const [homeCtaTitleEn, setHomeCtaTitleEn] = useState(settings.homeCta?.title?.en || TRANSLATIONS.en.home.ctaTitle);
+  const [homeCtaTitleDe, setHomeCtaTitleDe] = useState(settings.homeCta?.title?.de || TRANSLATIONS.de.home.ctaTitle);
+  const [homeCtaDescFr, setHomeCtaDescFr] = useState(settings.homeCta?.desc?.fr || TRANSLATIONS.fr.home.ctaDesc);
+  const [homeCtaDescEn, setHomeCtaDescEn] = useState(settings.homeCta?.desc?.en || TRANSLATIONS.en.home.ctaDesc);
+  const [homeCtaDescDe, setHomeCtaDescDe] = useState(settings.homeCta?.desc?.de || TRANSLATIONS.de.home.ctaDesc);
+  const [homeCtaBtnFr, setHomeCtaBtnFr] = useState(settings.homeCta?.btn?.fr || TRANSLATIONS.fr.home.ctaButton);
+  const [homeCtaBtnEn, setHomeCtaBtnEn] = useState(settings.homeCta?.btn?.en || TRANSLATIONS.en.home.ctaButton);
+  const [homeCtaBtnDe, setHomeCtaBtnDe] = useState(settings.homeCta?.btn?.de || TRANSLATIONS.de.home.ctaButton);
 
   // Appointment edit states
   const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null);
@@ -175,7 +266,7 @@ const Admin: React.FC<AdminProps> = ({
     });
   };
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, target: 'project' | 'blog' | 'about') => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, target: 'project' | 'blog' | 'about' | 'homeAbout') => {
     const file = e.target.files?.[0];
     if (file) {
       const isVideo = file.type.startsWith('video/');
@@ -212,6 +303,8 @@ const Admin: React.FC<AdminProps> = ({
             setBlogMedia(compressedBase64);
           } else if (target === 'about') {
             setAboutImage(compressedBase64);
+          } else if (target === 'homeAbout') {
+            setHomeAboutImage(compressedBase64);
           }
         } catch (err) {
           console.error("Compression error, falling back to original:", err);
@@ -225,6 +318,8 @@ const Admin: React.FC<AdminProps> = ({
               setBlogMedia(reader.result as string);
             } else if (target === 'about') {
               setAboutImage(reader.result as string);
+            } else if (target === 'homeAbout') {
+              setHomeAboutImage(reader.result as string);
             }
           };
           reader.readAsDataURL(file);
@@ -532,6 +627,45 @@ const Admin: React.FC<AdminProps> = ({
       services: {
         title: { fr: servicesTitleFr, en: servicesTitleEn, de: servicesTitleDe },
         headerDesc: { fr: servicesDescFr, en: servicesDescEn, de: servicesDescDe }
+      },
+      hero: {
+        title: { fr: heroTitleFr, en: heroTitleEn, de: heroTitleDe },
+        subtitle: { fr: heroSubtitleFr, en: heroSubtitleEn, de: heroSubtitleDe },
+        cta: { fr: heroCtaFr, en: heroCtaEn, de: heroCtaDe },
+        consultation: { fr: heroConsultationFr, en: heroConsultationEn, de: heroConsultationDe }
+      },
+      homeAbout: {
+        image: homeAboutImage,
+        tag: { fr: homeAboutTagFr, en: homeAboutTagEn, de: homeAboutTagDe },
+        title: { fr: homeAboutTitleFr, en: homeAboutTitleEn, de: homeAboutTitleDe },
+        quote: { fr: homeAboutQuoteFr, en: homeAboutQuoteEn, de: homeAboutQuoteDe },
+        bio: { fr: homeAboutBioFr, en: homeAboutBioEn, de: homeAboutBioDe },
+        btn: { fr: homeAboutBtnFr, en: homeAboutBtnEn, de: homeAboutBtnDe }
+      },
+      homeServices: {
+        tag: { fr: homeServicesTagFr, en: homeServicesTagEn, de: homeServicesTagDe },
+        title: { fr: homeServicesTitleFr, en: homeServicesTitleEn, de: homeServicesTitleDe },
+        btn: { fr: homeServicesBtnFr, en: homeServicesBtnEn, de: homeServicesBtnDe }
+      },
+      homePortfolio: {
+        tag: { fr: homePortfolioTagFr, en: homePortfolioTagEn, de: homePortfolioTagDe },
+        title: { fr: homePortfolioTitleFr, en: homePortfolioTitleEn, de: homePortfolioTitleDe },
+        btn: { fr: homePortfolioBtnFr, en: homePortfolioBtnEn, de: homePortfolioBtnDe }
+      },
+      homeBlog: {
+        tag: { fr: homeBlogTagFr, en: homeBlogTagEn, de: homeBlogTagDe },
+        title: { fr: homeBlogTitleFr, en: homeBlogTitleEn, de: homeBlogTitleDe },
+        desc: { fr: homeBlogDescFr, en: homeBlogDescEn, de: homeBlogDescDe },
+        btn: { fr: homeBlogBtnFr, en: homeBlogBtnEn, de: homeBlogBtnDe }
+      },
+      homeTestimonials: {
+        tag: { fr: homeTestimonialsTagFr, en: homeTestimonialsTagEn, de: homeTestimonialsTagDe },
+        title: { fr: homeTestimonialsTitleFr, en: homeTestimonialsTitleEn, de: homeTestimonialsTitleDe }
+      },
+      homeCta: {
+        title: { fr: homeCtaTitleFr, en: homeCtaTitleEn, de: homeCtaTitleDe },
+        desc: { fr: homeCtaDescFr, en: homeCtaDescEn, de: homeCtaDescDe },
+        btn: { fr: homeCtaBtnFr, en: homeCtaBtnEn, de: homeCtaBtnDe }
       }
     });
     alert(t.admin.settingsUpdated);
@@ -1212,6 +1346,157 @@ const Admin: React.FC<AdminProps> = ({
                       <textarea value={servicesDescDe} onChange={(e) => setServicesDescDe(e.target.value)} className="w-full bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 px-4 py-3 rounded-xl text-sm text-panda-black dark:text-panda-white outline-none focus:border-panda-gold h-20" />
                     </div>
                   </div>
+                </div>
+              </div>
+
+              {/* Home Page Sections Customizer */}
+              <div className="space-y-6 pt-8 border-t border-panda-black/10 dark:border-panda-white/10">
+                <h3 className="text-xs font-black uppercase tracking-[0.3em] text-panda-gold">Page d'Accueil (Section par Section)</h3>
+                <p className="text-xs text-panda-black/40 dark:text-panda-white/40 mb-4">Gérez le contenu de chaque section de la page d'accueil de manière autonome.</p>
+
+                {/* Collapsible Accordion Group */}
+                <div className="space-y-4">
+                  {[
+                    {
+                      id: 'hero',
+                      title: 'Section Hero (Bannière Principale)',
+                      fields: [
+                        { label: 'Titre principal', type: 'text', valueFr: heroTitleFr, setFr: setHeroTitleFr, valueEn: heroTitleEn, setEn: setHeroTitleEn, valueDe: heroTitleDe, setDe: setHeroTitleDe },
+                        { label: 'Sous-titre / Slogan', type: 'text', valueFr: heroSubtitleFr, setFr: setHeroSubtitleFr, valueEn: heroSubtitleEn, setEn: setHeroSubtitleEn, valueDe: heroSubtitleDe, setDe: setHeroSubtitleDe },
+                        { label: 'Texte Bouton CTA', type: 'text', valueFr: heroCtaFr, setFr: setHeroCtaFr, valueEn: heroCtaEn, setEn: setHeroCtaEn, valueDe: heroCtaDe, setDe: setHeroCtaDe },
+                        { label: 'Lien Consultation / Texte secondaire', type: 'text', valueFr: heroConsultationFr, setFr: setHeroConsultationFr, valueEn: heroConsultationEn, setEn: setHeroConsultationEn, valueDe: heroConsultationDe, setDe: setHeroConsultationDe }
+                      ]
+                    },
+                    {
+                      id: 'homeAbout',
+                      title: 'Section À Propos (Présentation de Victor)',
+                      isAbout: true,
+                      fields: [
+                        { label: 'Surtitre / Badge', type: 'text', valueFr: homeAboutTagFr, setFr: setHomeAboutTagFr, valueEn: homeAboutTagEn, setEn: setHomeAboutTagEn, valueDe: homeAboutTagDe, setDe: setHomeAboutTagDe },
+                        { label: 'Nom principal', type: 'text', valueFr: homeAboutTitleFr, setFr: setHomeAboutTitleFr, valueEn: homeAboutTitleEn, setEn: setHomeAboutTitleEn, valueDe: homeAboutTitleDe, setDe: setHomeAboutTitleDe },
+                        { label: 'Petite citation en exergue', type: 'text', valueFr: homeAboutQuoteFr, setFr: setHomeAboutQuoteFr, valueEn: homeAboutQuoteEn, setEn: setHomeAboutQuoteEn, valueDe: homeAboutQuoteDe, setDe: setHomeAboutQuoteDe },
+                        { label: 'Biographie ou description détaillée', type: 'textarea', valueFr: homeAboutBioFr, setFr: setHomeAboutBioFr, valueEn: homeAboutBioEn, setEn: setHomeAboutBioEn, valueDe: homeAboutBioDe, setDe: setHomeAboutBioDe },
+                        { label: 'Texte du bouton', type: 'text', valueFr: homeAboutBtnFr, setFr: setHomeAboutBtnFr, valueEn: homeAboutBtnEn, setEn: setHomeAboutBtnEn, valueDe: homeAboutBtnDe, setDe: setHomeAboutBtnDe }
+                      ]
+                    },
+                    {
+                      id: 'homeServices',
+                      title: 'Section Expertises (Nos Services)',
+                      fields: [
+                        { label: 'Surtitre / Badge', type: 'text', valueFr: homeServicesTagFr, setFr: setHomeServicesTagFr, valueEn: homeServicesTagEn, setEn: setHomeServicesTagEn, valueDe: homeServicesTagDe, setDe: setHomeServicesTagDe },
+                        { label: 'Titre principal', type: 'text', valueFr: homeServicesTitleFr, setFr: setHomeServicesTitleFr, valueEn: homeServicesTitleEn, setEn: setHomeServicesTitleEn, valueDe: homeServicesTitleDe, setDe: setHomeServicesTitleDe },
+                        { label: 'Texte du bouton', type: 'text', valueFr: homeServicesBtnFr, setFr: setHomeServicesBtnFr, valueEn: homeServicesBtnEn, setEn: setHomeServicesBtnEn, valueDe: homeServicesBtnDe, setDe: setHomeServicesBtnDe }
+                      ]
+                    },
+                    {
+                      id: 'homePortfolio',
+                      title: 'Section Portfolio (Galerie de Projets)',
+                      fields: [
+                        { label: 'Surtitre / Badge', type: 'text', valueFr: homePortfolioTagFr, setFr: setHomePortfolioTagFr, valueEn: homePortfolioTagEn, setEn: setHomePortfolioTagEn, valueDe: homePortfolioTagDe, setDe: setHomePortfolioTagDe },
+                        { label: 'Titre principal', type: 'text', valueFr: homePortfolioTitleFr, setFr: setHomePortfolioTitleFr, valueEn: homePortfolioTitleEn, setEn: setHomePortfolioTitleEn, valueDe: homePortfolioTitleDe, setDe: setHomePortfolioTitleDe },
+                        { label: 'Texte du bouton', type: 'text', valueFr: homePortfolioBtnFr, setFr: setHomePortfolioBtnFr, valueEn: homePortfolioBtnEn, setEn: setHomePortfolioBtnEn, valueDe: homePortfolioBtnDe, setDe: setHomePortfolioBtnDe }
+                      ]
+                    },
+                    {
+                      id: 'homeBlog',
+                      title: 'Section Actualités (Le Journal)',
+                      fields: [
+                        { label: 'Surtitre / Badge', type: 'text', valueFr: homeBlogTagFr, setFr: setHomeBlogTagFr, valueEn: homeBlogTagEn, setEn: setHomeBlogTagEn, valueDe: homeBlogTagDe, setDe: setHomeBlogTagDe },
+                        { label: 'Titre principal', type: 'text', valueFr: homeBlogTitleFr, setFr: setHomeBlogTitleFr, valueEn: homeBlogTitleEn, setEn: setHomeBlogTitleEn, valueDe: homeBlogTitleDe, setDe: setHomeBlogTitleDe },
+                        { label: 'Description', type: 'textarea', valueFr: homeBlogDescFr, setFr: setHomeBlogDescFr, valueEn: homeBlogDescEn, setEn: setHomeBlogDescEn, valueDe: homeBlogDescDe, setDe: setHomeBlogDescDe },
+                        { label: 'Texte du bouton', type: 'text', valueFr: homeBlogBtnFr, setFr: setHomeBlogBtnFr, valueEn: homeBlogBtnEn, setEn: setHomeBlogBtnEn, valueDe: homeBlogBtnDe, setDe: setHomeBlogBtnDe }
+                      ]
+                    },
+                    {
+                      id: 'homeTestimonials',
+                      title: 'Section Témoignages (Avis Clients)',
+                      fields: [
+                        { label: 'Surtitre / Badge', type: 'text', valueFr: homeTestimonialsTagFr, setFr: setHomeTestimonialsTagFr, valueEn: homeTestimonialsTagEn, setEn: setHomeTestimonialsTagEn, valueDe: homeTestimonialsTagDe, setDe: setHomeTestimonialsTagDe },
+                        { label: 'Titre principal', type: 'text', valueFr: homeTestimonialsTitleFr, setFr: setHomeTestimonialsTitleFr, valueEn: homeTestimonialsTitleEn, setEn: setHomeTestimonialsTitleEn, valueDe: homeTestimonialsTitleDe, setDe: setHomeTestimonialsTitleDe }
+                      ]
+                    },
+                    {
+                      id: 'homeCta',
+                      title: 'Section Appel à l\'Action (CTA Bas de Page)',
+                      fields: [
+                        { label: 'Titre principal', type: 'text', valueFr: homeCtaTitleFr, setFr: setHomeCtaTitleFr, valueEn: homeCtaTitleEn, setEn: setHomeCtaTitleEn, valueDe: homeCtaTitleDe, setDe: setHomeCtaTitleDe },
+                        { label: 'Description', type: 'textarea', valueFr: homeCtaDescFr, setFr: setHomeCtaDescFr, valueEn: homeCtaDescEn, setEn: setHomeCtaDescEn, valueDe: homeCtaDescDe, setDe: setHomeCtaDescDe },
+                        { label: 'Texte du bouton', type: 'text', valueFr: homeCtaBtnFr, setFr: setHomeCtaBtnFr, valueEn: homeCtaBtnEn, setEn: setHomeCtaBtnEn, valueDe: homeCtaBtnDe, setDe: setHomeCtaBtnDe }
+                      ]
+                    }
+                  ].map(sec => (
+                    <div key={sec.id} className="border border-panda-black/10 dark:border-panda-white/10 rounded-2xl overflow-hidden transition-all bg-panda-black/5 dark:bg-panda-black/30">
+                      <button
+                        type="button"
+                        onClick={() => setExpandedSection(expandedSection === sec.id ? null : sec.id)}
+                        className="w-full flex items-center justify-between p-6 hover:bg-panda-black/5 dark:hover:bg-panda-white/5 transition-all text-left"
+                      >
+                        <span className="font-bold text-sm tracking-tight text-panda-black dark:text-panda-white">{sec.title}</span>
+                        <Pencil size={14} className={`transition-all text-panda-gold ${expandedSection === sec.id ? 'rotate-45' : ''}`} />
+                      </button>
+
+                      {expandedSection === sec.id && (
+                        <div className="p-6 border-t border-panda-black/10 dark:border-panda-white/10 bg-white dark:bg-panda-black/40 space-y-6">
+                          {sec.isAbout && (
+                            <div className="space-y-3 bg-panda-black/5 dark:bg-panda-black/40 p-4 rounded-2xl border border-panda-black/10 dark:border-panda-white/10">
+                              <span className="text-[10px] font-black uppercase tracking-widest text-panda-black/40 dark:text-panda-white/40 block">Photo de présentation d'accueil</span>
+                              <div className="flex flex-col sm:flex-row items-center gap-4">
+                                <img src={homeAboutImage} alt="Home About Preview" className="w-20 h-20 rounded-xl object-cover border border-panda-black/10 dark:border-panda-white/10" />
+                                <div className="space-y-1">
+                                  <button
+                                    type="button"
+                                    onClick={() => homeAboutFileInputRef.current?.click()}
+                                    className="px-4 py-2 bg-panda-gold/10 border border-panda-gold/30 hover:bg-panda-gold text-panda-gold hover:text-panda-black font-bold text-[10px] uppercase tracking-widest rounded-lg transition-all"
+                                  >
+                                    Uploader l'image
+                                  </button>
+                                  <input
+                                    type="file"
+                                    ref={homeAboutFileInputRef}
+                                    accept="image/*"
+                                    onChange={(e) => handleFileChange(e, 'homeAbout')}
+                                    className="hidden"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {sec.fields.map((f, fIdx) => (
+                            <div key={fIdx} className="space-y-4 p-4 bg-panda-black/5 dark:bg-panda-black/20 rounded-2xl border border-panda-black/5 dark:border-panda-white/5">
+                              <span className="text-[10px] font-black uppercase tracking-widest text-panda-black/40 dark:text-panda-white/40 block">{f.label}</span>
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div className="space-y-1">
+                                  <label className="text-[9px] uppercase tracking-wider text-panda-gold">Français</label>
+                                  {f.type === 'textarea' ? (
+                                    <textarea value={f.valueFr} onChange={(e) => f.setFr(e.target.value)} className="w-full bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 px-3 py-2 rounded-xl text-xs text-panda-black dark:text-panda-white outline-none focus:border-panda-gold h-20" />
+                                  ) : (
+                                    <input type="text" value={f.valueFr} onChange={(e) => f.setFr(e.target.value)} className="w-full bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 px-3 py-2 rounded-xl text-xs text-panda-black dark:text-panda-white outline-none focus:border-panda-gold" />
+                                  )}
+                                </div>
+                                <div className="space-y-1">
+                                  <label className="text-[9px] uppercase tracking-wider text-panda-gold">English</label>
+                                  {f.type === 'textarea' ? (
+                                    <textarea value={f.valueEn} onChange={(e) => f.setEn(e.target.value)} className="w-full bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 px-3 py-2 rounded-xl text-xs text-panda-black dark:text-panda-white outline-none focus:border-panda-gold h-20" />
+                                  ) : (
+                                    <input type="text" value={f.valueEn} onChange={(e) => f.setEn(e.target.value)} className="w-full bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 px-3 py-2 rounded-xl text-xs text-panda-black dark:text-panda-white outline-none focus:border-panda-gold" />
+                                  )}
+                                </div>
+                                <div className="space-y-1">
+                                  <label className="text-[9px] uppercase tracking-wider text-panda-gold">Deutsch</label>
+                                  {f.type === 'textarea' ? (
+                                    <textarea value={f.valueDe} onChange={(e) => f.setDe(e.target.value)} className="w-full bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 px-3 py-2 rounded-xl text-xs text-panda-black dark:text-panda-white outline-none focus:border-panda-gold h-20" />
+                                  ) : (
+                                    <input type="text" value={f.valueDe} onChange={(e) => f.setDe(e.target.value)} className="w-full bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 px-3 py-2 rounded-xl text-xs text-panda-black dark:text-panda-white outline-none focus:border-panda-gold" />
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
               </div>
 
