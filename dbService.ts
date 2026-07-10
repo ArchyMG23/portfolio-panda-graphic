@@ -102,6 +102,15 @@ export async function addProjectToDb(project: Project): Promise<void> {
   }
 }
 
+// Utility to update a project
+export async function updateProjectInDb(project: Project): Promise<void> {
+  try {
+    await setDoc(doc(db, PROJECTS_COLL, project.id), project);
+  } catch (error) {
+    handleFirestoreError(error, OperationType.WRITE, `${PROJECTS_COLL}/${project.id}`);
+  }
+}
+
 // Utility to delete a project
 export async function deleteProjectFromDb(id: string): Promise<void> {
   try {
@@ -170,6 +179,15 @@ export async function getTestimonialsFromDb(): Promise<Testimonial[]> {
 
 // Utility to add a testimonial
 export async function addTestimonialToDb(testimonial: Testimonial): Promise<void> {
+  try {
+    await setDoc(doc(db, TESTIMONIALS_COLL, testimonial.id), testimonial);
+  } catch (error) {
+    handleFirestoreError(error, OperationType.WRITE, `${TESTIMONIALS_COLL}/${testimonial.id}`);
+  }
+}
+
+// Utility to update a testimonial
+export async function updateTestimonialInDb(testimonial: Testimonial): Promise<void> {
   try {
     await setDoc(doc(db, TESTIMONIALS_COLL, testimonial.id), testimonial);
   } catch (error) {

@@ -20,6 +20,7 @@ import Admin from './pages/Admin';
 import {
   getProjectsFromDb,
   addProjectToDb,
+  updateProjectInDb,
   deleteProjectFromDb,
   getBlogPostsFromDb,
   addBlogPostToDb,
@@ -27,6 +28,7 @@ import {
   deleteBlogPostFromDb,
   getTestimonialsFromDb,
   addTestimonialToDb,
+  updateTestimonialInDb,
   deleteTestimonialFromDb,
   getAppointmentsFromDb,
   addAppointmentToDb,
@@ -124,11 +126,29 @@ const App: React.FC = () => {
           getSettingsFromDb()
         ]);
         
-        setProjects(projList && projList.length > 0 ? projList : INITIAL_PROJECTS);
-        setPosts(postList && postList.length > 0 ? postList : INITIAL_POSTS);
-        setTestimonials(testList && testList.length > 0 ? testList : INITIAL_TESTIMONIALS);
+        const finalProjects = projList || [];
+        const finalPosts = postList || [];
+        const finalTestimonials = testList || [];
+
+        setProjects(finalProjects);
+        setPosts(finalPosts);
+        setTestimonials(finalTestimonials);
         setAppointments(apptList);
         setSettings(settObj);
+
+        // Preload the project images to avoid slow image loading flicker after the loader fades out
+        const imagesToPreload = finalProjects.slice(0, 6).map(p => p.image);
+        await Promise.all(imagesToPreload.map(url => {
+          if (!url || url.endsWith('.mp4') || url.endsWith('.webm')) {
+            return Promise.resolve();
+          }
+          return new Promise<void>((resolve) => {
+            const img = new Image();
+            img.src = url;
+            img.onload = () => resolve();
+            img.onerror = () => resolve();
+          });
+        }));
       } catch (error) {
         console.error("Error loading data from Firestore, falling back to static constants:", error);
         setProjects(INITIAL_PROJECTS);
@@ -201,6 +221,20 @@ const App: React.FC = () => {
         : `Error deleting project: ${getErrorMessage(err)}`);
     }
   };
+
+  const updateProject = async (p: Project) => {
+    const originalProjects = [...projects];
+    setProjects(prev => prev.map(item => item.id === p.id ? p : item));
+    try {
+      await updateProjectInDb(p);
+    } catch (err) {
+      console.error("Error updating project in Firestore:", err);
+      setProjects(originalProjects);
+      alert(lang === 'fr'
+        ? `Erreur lors de la modification du projet : ${getErrorMessage(err)}`
+        : `Error updating project: ${getErrorMessage(err)}`);
+    }
+  };
   
   const addTestimonial = async (t: Testimonial) => {
     try {
@@ -225,6 +259,20 @@ const App: React.FC = () => {
       alert(lang === 'fr'
         ? `Erreur lors de la suppression du témoignage : ${getErrorMessage(err)}`
         : `Error deleting testimonial: ${getErrorMessage(err)}`);
+    }
+  };
+
+  const updateTestimonial = async (t: Testimonial) => {
+    const originalTestimonials = [...testimonials];
+    setTestimonials(prev => prev.map(item => item.id === t.id ? t : item));
+    try {
+      await updateTestimonialInDb(t);
+    } catch (err) {
+      console.error("Error updating testimonial in Firestore:", err);
+      setTestimonials(originalTestimonials);
+      alert(lang === 'fr'
+        ? `Erreur lors de la modification du témoignage : ${getErrorMessage(err)}`
+        : `Error updating testimonial: ${getErrorMessage(err)}`);
     }
   };
   
@@ -548,12 +596,14 @@ const App: React.FC = () => {
                 lang={lang} 
                 projects={projects} 
                 onAddProject={addProject} 
+                onUpdateProject={updateProject}
                 onDeleteProject={deleteProject}
                 posts={posts}
                 onAddPost={addPost}
                 onDeletePost={deletePost}
                 testimonials={testimonials}
                 onAddTestimonial={addTestimonial}
+                onUpdateTestimonial={updateTestimonial}
                 onDeleteTestimonial={deleteTestimonial}
                 appointments={appointments}
                 onUpdateAppointment={updateAppointment}

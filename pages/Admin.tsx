@@ -5,7 +5,7 @@ import {
   Plus, Trash2, Calendar, Layout, BookOpen, 
   Sparkles, Loader2, Mail, Lock, Unlock, 
   ArrowRight, Upload, ImageIcon, Film, X, FileText, CheckCircle, Clock, User,
-  Heart, MessageCircle, Settings
+  Heart, MessageCircle, Settings, Pencil
 } from 'lucide-react';
 import { Project, BlogPost, Appointment, ProjectCategory, Language, AppSettings, Testimonial } from '../types';
 import { CATEGORIES, TRANSLATIONS } from '../constants';
@@ -17,10 +17,12 @@ interface AdminProps {
   appointments: Appointment[];
   testimonials: Testimonial[];
   onAddProject: (p: Project) => void;
+  onUpdateProject: (p: Project) => void;
   onDeleteProject: (id: string) => void;
   onAddPost: (p: BlogPost) => void;
   onDeletePost: (id: string) => void;
   onAddTestimonial: (t: Testimonial) => void;
+  onUpdateTestimonial: (t: Testimonial) => void;
   onDeleteTestimonial: (id: string) => void;
   onUpdateAppointment: (a: Appointment) => void;
   onDeleteAppointment: (id: string) => void;
@@ -34,8 +36,8 @@ const ADMIN_CODE = "PANDA2025";
 
 const Admin: React.FC<AdminProps> = ({ 
   lang, projects, posts, appointments, testimonials,
-  onAddProject, onDeleteProject, onAddPost, onDeletePost,
-  onAddTestimonial, onDeleteTestimonial,
+  onAddProject, onUpdateProject, onDeleteProject, onAddPost, onDeletePost,
+  onAddTestimonial, onUpdateTestimonial, onDeleteTestimonial,
   onUpdateAppointment, onDeleteAppointment,
   settings, onUpdateSettings,
   isAdmin, setIsAdmin
@@ -59,6 +61,7 @@ const Admin: React.FC<AdminProps> = ({
   const [editStatus, setEditStatus] = useState<'pending' | 'confirmed' | 'cancelled'>('pending');
   
   // Project form states
+  const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [newProjectTitle, setNewProjectTitle] = useState('');
   const [newProjectDesc, setNewProjectDesc] = useState('');
   const [newProjectProblem, setNewProjectProblem] = useState('');
@@ -67,6 +70,7 @@ const Admin: React.FC<AdminProps> = ({
   const [newProjectCategory, setNewProjectCategory] = useState<ProjectCategory>(ProjectCategory.GALLERY);
   
   // Testimonial form states
+  const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null);
   const [newTestimonialName, setNewTestimonialName] = useState('');
   const [newTestimonialRole, setNewTestimonialRole] = useState('');
   const [newTestimonialContent, setNewTestimonialContent] = useState('');
@@ -205,21 +209,65 @@ const Admin: React.FC<AdminProps> = ({
     setNewProjectSolution('');
     setNewProjectCaseStudy('');
     setPreviewMedia(null);
+    setEditingProject(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const handleEditProject = (p: Project) => {
+    setEditingProject(p);
+    setNewProjectTitle(p.title[lang] || p.title.fr || '');
+    setNewProjectDesc(p.description?.[lang] || p.description?.fr || '');
+    setNewProjectProblem(p.problem?.[lang] || p.problem?.fr || '');
+    setNewProjectSolution(p.solution?.[lang] || p.solution?.fr || '');
+    setNewProjectCaseStudy(p.caseStudy?.[lang] || p.caseStudy?.fr || '');
+    setNewProjectCategory(p.category);
+    setPreviewMedia(p.image);
+    setMediaType(p.mediaType || 'image');
+  };
+
+  const handleCancelEditProject = () => {
+    resetProjectForm();
+  };
+
+  const handleEditTestimonial = (t: Testimonial) => {
+    setEditingTestimonial(t);
+    setNewTestimonialName(t.name);
+    setNewTestimonialRole(t.role[lang] || t.role.fr || '');
+    setNewTestimonialContent(t.content[lang] || t.content.fr || '');
+    setNewTestimonialProject(t.project?.[lang] || t.project?.fr || '');
+  };
+
+  const handleCancelEditTestimonial = () => {
+    setEditingTestimonial(null);
+    setNewTestimonialName('');
+    setNewTestimonialRole('');
+    setNewTestimonialContent('');
+    setNewTestimonialProject('');
   };
 
   const handleAddTestimonial = () => {
     if (!newTestimonialName || !newTestimonialContent) return;
     
-    const testimonial: Testimonial = {
-      id: Date.now().toString(),
-      name: newTestimonialName,
-      role: { fr: newTestimonialRole, en: newTestimonialRole, de: newTestimonialRole },
-      content: { fr: newTestimonialContent, en: newTestimonialContent, de: newTestimonialContent },
-      project: { fr: newTestimonialProject, en: newTestimonialProject, de: newTestimonialProject }
-    };
-
-    onAddTestimonial(testimonial);
+    if (editingTestimonial) {
+      const updated: Testimonial = {
+        ...editingTestimonial,
+        name: newTestimonialName,
+        role: { fr: newTestimonialRole, en: newTestimonialRole, de: newTestimonialRole },
+        content: { fr: newTestimonialContent, en: newTestimonialContent, de: newTestimonialContent },
+        project: { fr: newTestimonialProject, en: newTestimonialProject, de: newTestimonialProject }
+      };
+      onUpdateTestimonial(updated);
+      setEditingTestimonial(null);
+    } else {
+      const testimonial: Testimonial = {
+        id: Date.now().toString(),
+        name: newTestimonialName,
+        role: { fr: newTestimonialRole, en: newTestimonialRole, de: newTestimonialRole },
+        content: { fr: newTestimonialContent, en: newTestimonialContent, de: newTestimonialContent },
+        project: { fr: newTestimonialProject, en: newTestimonialProject, de: newTestimonialProject }
+      };
+      onAddTestimonial(testimonial);
+    }
 
     setNewTestimonialName('');
     setNewTestimonialRole('');
@@ -242,20 +290,34 @@ const Admin: React.FC<AdminProps> = ({
     if (!newProjectTitle || !previewMedia) return;
     setIsGenerating(true);
     try {
-      // No more translation API, use the same text for all languages for now
-      const project: Project = {
-        id: Math.random().toString(36).substring(7),
-        title: { fr: newProjectTitle, en: newProjectTitle, de: newProjectTitle },
-        category: newProjectCategory,
-        image: previewMedia,
-        mediaType: mediaType,
-        description: { fr: newProjectDesc, en: newProjectDesc, de: newProjectDesc },
-        problem: { fr: newProjectProblem, en: newProjectProblem, de: newProjectProblem },
-        solution: { fr: newProjectSolution, en: newProjectSolution, de: newProjectSolution },
-        caseStudy: { fr: newProjectCaseStudy, en: newProjectCaseStudy, de: newProjectCaseStudy }
-      };
-
-      onAddProject(project);
+      if (editingProject) {
+        const updated: Project = {
+          ...editingProject,
+          title: { fr: newProjectTitle, en: newProjectTitle, de: newProjectTitle },
+          category: newProjectCategory,
+          image: previewMedia,
+          mediaType: mediaType,
+          description: { fr: newProjectDesc, en: newProjectDesc, de: newProjectDesc },
+          problem: { fr: newProjectProblem, en: newProjectProblem, de: newProjectProblem },
+          solution: { fr: newProjectSolution, en: newProjectSolution, de: newProjectSolution },
+          caseStudy: { fr: newProjectCaseStudy, en: newProjectCaseStudy, de: newProjectCaseStudy }
+        };
+        onUpdateProject(updated);
+        setEditingProject(null);
+      } else {
+        const project: Project = {
+          id: Math.random().toString(36).substring(7),
+          title: { fr: newProjectTitle, en: newProjectTitle, de: newProjectTitle },
+          category: newProjectCategory,
+          image: previewMedia,
+          mediaType: mediaType,
+          description: { fr: newProjectDesc, en: newProjectDesc, de: newProjectDesc },
+          problem: { fr: newProjectProblem, en: newProjectProblem, de: newProjectProblem },
+          solution: { fr: newProjectSolution, en: newProjectSolution, de: newProjectSolution },
+          caseStudy: { fr: newProjectCaseStudy, en: newProjectCaseStudy, de: newProjectCaseStudy }
+        };
+        onAddProject(project);
+      }
       resetProjectForm();
     } finally {
       setIsGenerating(false);
@@ -387,7 +449,7 @@ const Admin: React.FC<AdminProps> = ({
           <div className="bg-panda-black/5 dark:bg-panda-white/5 border border-panda-black/10 dark:border-panda-white/10 p-10 rounded-[2.5rem]">
             <h3 className="text-2xl font-display font-bold mb-8 flex items-center space-x-3 uppercase tracking-tighter text-panda-black dark:text-panda-white">
               <Plus size={24} className="text-panda-gold" /> 
-              <span>{t.admin.addProject}</span>
+              <span>{editingProject ? (lang === 'fr' ? 'Modifier le projet' : 'Edit Project') : t.admin.addProject}</span>
             </h3>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
               <div className="space-y-6">
@@ -428,13 +490,29 @@ const Admin: React.FC<AdminProps> = ({
                   onChange={(e) => setNewProjectCaseStudy(e.target.value)}
                   className="w-full bg-white dark:bg-panda-black/50 border border-panda-black/10 dark:border-panda-white/10 p-5 rounded-2xl outline-none focus:border-panda-gold h-40 text-panda-black dark:text-panda-white" 
                 />
-                <button 
-                  onClick={handleAddProject}
-                  disabled={!newProjectTitle || !previewMedia || isGenerating}
-                  className="w-full py-5 bg-panda-gold text-panda-black font-black uppercase tracking-widest rounded-2xl disabled:opacity-30 flex items-center justify-center space-x-3"
-                >
-                  {isGenerating ? <Loader2 className="animate-spin" size={20} /> : t.admin.publishProject}
-                </button>
+                <div className="flex gap-4">
+                  <button 
+                    onClick={handleAddProject}
+                    disabled={!newProjectTitle || !previewMedia || isGenerating}
+                    className="flex-1 py-5 bg-panda-gold text-panda-black font-black uppercase tracking-widest rounded-2xl disabled:opacity-30 flex items-center justify-center space-x-3"
+                  >
+                    {isGenerating ? (
+                      <Loader2 className="animate-spin" size={20} />
+                    ) : editingProject ? (
+                      lang === 'fr' ? 'Enregistrer les modifications' : 'Save Changes'
+                    ) : (
+                      t.admin.publishProject
+                    )}
+                  </button>
+                  {editingProject && (
+                    <button 
+                      onClick={handleCancelEditProject}
+                      className="px-8 py-5 bg-panda-black/10 dark:bg-panda-white/10 text-panda-black dark:text-panda-white font-black uppercase tracking-widest rounded-2xl hover:bg-panda-black/20 dark:hover:bg-panda-white/20 transition-all"
+                    >
+                      {lang === 'fr' ? 'Annuler' : 'Cancel'}
+                    </button>
+                  )}
+                </div>
               </div>
               <div className="flex flex-col">
                 <input type="file" ref={fileInputRef} className="hidden" accept="image/*,video/*" onChange={(e) => handleFileChange(e, 'project')} />
@@ -464,7 +542,20 @@ const Admin: React.FC<AdminProps> = ({
                  </div>
                  <h4 className="font-bold text-lg mb-1 text-panda-black dark:text-panda-white">{p.title[lang]}</h4>
                  <span className="text-xs text-panda-gold uppercase tracking-widest font-black">{p.category}</span>
-                 <button onClick={() => onDeleteProject(p.id)} className="absolute top-8 right-8 p-3 bg-red-500/20 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all opacity-0 group-hover:opacity-100 shadow-xl"><Trash2 size={18} /></button>
+                 <div className="absolute top-8 right-8 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                    <button 
+                      onClick={() => handleEditProject(p)} 
+                      className="p-3 bg-panda-gold/20 text-panda-gold rounded-xl hover:bg-panda-gold hover:text-panda-black transition-all shadow-xl"
+                    >
+                      <Pencil size={18} />
+                    </button>
+                    <button 
+                      onClick={() => onDeleteProject(p.id)} 
+                      className="p-3 bg-red-500/20 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all shadow-xl"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
                </div>
              ))}
           </div>
@@ -605,7 +696,7 @@ const Admin: React.FC<AdminProps> = ({
                 <MessageCircle className="text-panda-gold" size={24} />
               </div>
               <div>
-                <h2 className="text-2xl font-display font-bold text-panda-black dark:text-panda-white">Témoignages</h2>
+                <h2 className="text-2xl font-display font-bold text-panda-black dark:text-panda-white">{editingTestimonial ? "Modifier le témoignage" : "Témoignages"}</h2>
                 <p className="text-panda-black/60 dark:text-panda-white/60">Gérez les retours clients</p>
               </div>
             </div>
@@ -640,13 +731,23 @@ const Admin: React.FC<AdminProps> = ({
                   onChange={(e) => setNewTestimonialContent(e.target.value)}
                   className="w-full bg-white dark:bg-panda-black/50 border border-panda-black/10 dark:border-panda-white/10 p-5 rounded-2xl outline-none focus:border-panda-gold h-32 text-panda-black dark:text-panda-white" 
                 />
-                <button 
-                  onClick={handleAddTestimonial}
-                  className="w-full bg-panda-gold text-panda-black font-bold py-5 rounded-2xl hover:bg-panda-gold/90 transition-all flex items-center justify-center gap-2"
-                >
-                  <Plus size={20} />
-                  Ajouter le témoignage
-                </button>
+                <div className="flex gap-4">
+                  <button 
+                    onClick={handleAddTestimonial}
+                    className="flex-1 bg-panda-gold text-panda-black font-bold py-5 rounded-2xl hover:bg-panda-gold/90 transition-all flex items-center justify-center gap-2"
+                  >
+                    <Plus size={20} />
+                    {editingTestimonial ? "Enregistrer les modifications" : "Ajouter le témoignage"}
+                  </button>
+                  {editingTestimonial && (
+                    <button 
+                      onClick={handleCancelEditTestimonial}
+                      className="px-8 py-5 bg-panda-black/10 dark:bg-panda-white/10 text-panda-black dark:text-panda-white font-bold rounded-2xl hover:bg-panda-black/20 dark:hover:bg-panda-white/20 transition-all"
+                    >
+                      Annuler
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* Testimonials List */}
@@ -658,12 +759,20 @@ const Admin: React.FC<AdminProps> = ({
                       <p className="text-sm text-panda-gold">{testimonial.role.fr}</p>
                       <p className="text-sm text-panda-black/70 dark:text-panda-white/70 mt-2 italic">"{testimonial.content.fr}"</p>
                     </div>
-                    <button 
-                      onClick={() => handleDeleteTestimonial(testimonial.id)}
-                      className="p-2 text-red-500 hover:bg-red-500/10 rounded-xl transition-all"
-                    >
-                      <Trash2 size={18} />
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button 
+                        onClick={() => handleEditTestimonial(testimonial)}
+                        className="p-2 text-panda-gold hover:bg-panda-gold/10 rounded-xl transition-all"
+                      >
+                        <Pencil size={18} />
+                      </button>
+                      <button 
+                        onClick={() => handleDeleteTestimonial(testimonial.id)}
+                        className="p-2 text-red-500 hover:bg-red-500/10 rounded-xl transition-all"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
