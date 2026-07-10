@@ -136,9 +136,9 @@ const App: React.FC = () => {
         setAppointments(apptList);
         setSettings(settObj);
 
-        // Preload the project images to avoid slow image loading flicker after the loader fades out
+        // Preload the project images in the background to avoid slow image loading flicker, without blocking the app launch
         const imagesToPreload = finalProjects.slice(0, 6).map(p => p.image);
-        await Promise.all(imagesToPreload.map(url => {
+        Promise.all(imagesToPreload.map(url => {
           if (!url || url.endsWith('.mp4') || url.endsWith('.webm')) {
             return Promise.resolve();
           }
@@ -148,7 +148,7 @@ const App: React.FC = () => {
             img.onload = () => resolve();
             img.onerror = () => resolve();
           });
-        }));
+        })).catch(err => console.warn("Preload in background failed:", err));
       } catch (error) {
         console.error("Error loading data from Firestore, falling back to static constants:", error);
         setProjects(INITIAL_PROJECTS);
@@ -445,14 +445,14 @@ const App: React.FC = () => {
                 P
               </motion.div>
               
-              {/* Text shimmer and title reveal */}
+               {/* Text shimmer and title reveal */}
               <motion.div 
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.8 }}
-                className="mt-8 flex flex-col items-center"
+                className="mt-8 flex flex-col items-center px-4 max-w-full"
               >
-                <h2 className="font-display text-2xl font-bold tracking-[0.3em] uppercase text-panda-white">
+                <h2 className="font-display text-lg sm:text-2xl font-bold tracking-[0.15em] sm:tracking-[0.3em] uppercase text-panda-white whitespace-nowrap">
                   PANDA<span className="text-panda-gold">_</span>GRAPHIC
                 </h2>
                 <div className="mt-4 w-32 h-[1px] bg-panda-white/10 relative overflow-hidden">

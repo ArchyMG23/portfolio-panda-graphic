@@ -108,7 +108,7 @@ const Home: React.FC<HomeProps> = ({ lang, projects, posts, testimonials, settin
         
         <div className="animate-slide-up px-4 max-w-full">
           <span className="text-panda-gold font-display text-xs sm:text-sm tracking-[0.5em] uppercase mb-4 sm:mb-8 block">{settings?.hero?.title?.[lang] || t.hero.title}</span>
-          <h1 className="font-display text-4xl sm:text-7xl md:text-9xl font-bold tracking-tighter mb-6 sm:mb-8 leading-none break-all sm:break-normal">
+          <h1 className="font-display text-4xl sm:text-7xl md:text-9xl font-bold tracking-tighter mb-6 sm:mb-8 leading-none break-words sm:break-normal">
             {heroTitle.includes('_') ? (
               <>
                 {heroTitle.split('_')[0]}<span className="text-panda-gold">_</span>{heroTitle.split('_')[1]}
