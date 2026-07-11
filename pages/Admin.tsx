@@ -5,7 +5,7 @@ import {
   Plus, Trash2, Calendar, Layout, BookOpen, 
   Sparkles, Loader2, Mail, Lock, Unlock, 
   ArrowRight, Upload, ImageIcon, Film, X, FileText, CheckCircle, Clock, User,
-  Heart, MessageCircle, Settings, Pencil
+  Heart, MessageCircle, Settings, Pencil, Star
 } from 'lucide-react';
 import { Project, BlogPost, Appointment, ProjectCategory, Language, AppSettings, Testimonial, ProjectMedia } from '../types';
 import { CATEGORIES, TRANSLATIONS } from '../constants';
@@ -192,6 +192,9 @@ const Admin: React.FC<AdminProps> = ({
   const [newTestimonialRole, setNewTestimonialRole] = useState('');
   const [newTestimonialContent, setNewTestimonialContent] = useState('');
   const [newTestimonialProject, setNewTestimonialProject] = useState('');
+  const [newTestimonialEmail, setNewTestimonialEmail] = useState('');
+  const [newTestimonialRating, setNewTestimonialRating] = useState(5);
+  const [newTestimonialIsApproved, setNewTestimonialIsApproved] = useState(false);
 
   const [previewMedia, setPreviewMedia] = useState<string | null>(null);
   const [mediaType, setMediaType] = useState<'image' | 'video'>('image');
@@ -426,6 +429,9 @@ const Admin: React.FC<AdminProps> = ({
     setNewTestimonialRole(t.role[lang] || t.role.fr || '');
     setNewTestimonialContent(t.content[lang] || t.content.fr || '');
     setNewTestimonialProject(t.project?.[lang] || t.project?.fr || '');
+    setNewTestimonialEmail(t.email || '');
+    setNewTestimonialRating(t.rating ?? 5);
+    setNewTestimonialIsApproved(t.is_approved !== false);
   };
 
   const handleCancelEditTestimonial = () => {
@@ -434,6 +440,9 @@ const Admin: React.FC<AdminProps> = ({
     setNewTestimonialRole('');
     setNewTestimonialContent('');
     setNewTestimonialProject('');
+    setNewTestimonialEmail('');
+    setNewTestimonialRating(5);
+    setNewTestimonialIsApproved(false);
   };
 
   const handleAddTestimonial = () => {
@@ -445,7 +454,10 @@ const Admin: React.FC<AdminProps> = ({
         name: newTestimonialName,
         role: { fr: newTestimonialRole, en: newTestimonialRole, de: newTestimonialRole },
         content: { fr: newTestimonialContent, en: newTestimonialContent, de: newTestimonialContent },
-        project: { fr: newTestimonialProject, en: newTestimonialProject, de: newTestimonialProject }
+        project: { fr: newTestimonialProject, en: newTestimonialProject, de: newTestimonialProject },
+        email: newTestimonialEmail,
+        rating: newTestimonialRating,
+        is_approved: newTestimonialIsApproved
       };
       onUpdateTestimonial(updated);
       setEditingTestimonial(null);
@@ -455,7 +467,11 @@ const Admin: React.FC<AdminProps> = ({
         name: newTestimonialName,
         role: { fr: newTestimonialRole, en: newTestimonialRole, de: newTestimonialRole },
         content: { fr: newTestimonialContent, en: newTestimonialContent, de: newTestimonialContent },
-        project: { fr: newTestimonialProject, en: newTestimonialProject, de: newTestimonialProject }
+        project: { fr: newTestimonialProject, en: newTestimonialProject, de: newTestimonialProject },
+        email: newTestimonialEmail,
+        rating: newTestimonialRating,
+        is_approved: newTestimonialIsApproved,
+        created_at: new Date().toISOString()
       };
       onAddTestimonial(testimonial);
     }
@@ -464,6 +480,9 @@ const Admin: React.FC<AdminProps> = ({
     setNewTestimonialRole('');
     setNewTestimonialContent('');
     setNewTestimonialProject('');
+    setNewTestimonialEmail('');
+    setNewTestimonialRating(5);
+    setNewTestimonialIsApproved(false);
   };
 
   const handleDeleteTestimonial = (id: string) => {
@@ -1037,59 +1056,115 @@ const Admin: React.FC<AdminProps> = ({
       {tab === 'settings' && (
         <div className="max-w-2xl mx-auto space-y-12 animate-in slide-in-from-bottom-10 duration-700">
           {/* Testimonials Management */}
-          <div className="bg-panda-white/5 dark:bg-panda-white/5 backdrop-blur-xl rounded-[1.5rem] sm:rounded-[3rem] p-6 sm:p-12 border border-panda-black/10 dark:border-panda-white/10">
+          {/* Testimonials Management */}
+          <div className="bg-panda-white/5 dark:bg-panda-white/5 backdrop-blur-xl rounded-[1.5rem] sm:rounded-[3rem] p-6 sm:p-12 border border-panda-black/10 dark:border-panda-white/10" id="admin-testimonials-card">
             <div className="flex items-center gap-3 mb-8">
               <div className="w-12 h-12 rounded-2xl bg-panda-gold/20 flex items-center justify-center">
                 <MessageCircle className="text-panda-gold" size={24} />
               </div>
               <div>
-                <h2 className="text-2xl font-display font-bold text-panda-black dark:text-panda-white">{editingTestimonial ? "Modifier le témoignage" : "Témoignages"}</h2>
-                <p className="text-panda-black/60 dark:text-panda-white/60">Gérez les retours clients</p>
+                <h2 className="text-2xl font-display font-bold text-panda-black dark:text-panda-white">
+                  {editingTestimonial ? "Modifier le témoignage" : "Avis & Témoignages"}
+                </h2>
+                <p className="text-panda-black/60 dark:text-panda-white/60">Gérez, relisez et modérez les retours clients</p>
               </div>
             </div>
 
             <div className="space-y-8">
-              {/* Add Testimonial Form */}
-              <div className="grid grid-cols-1 gap-4">
-                <input 
-                  type="text" 
-                  placeholder="Nom du client" 
-                  value={newTestimonialName}
-                  onChange={(e) => setNewTestimonialName(e.target.value)}
-                  className="w-full bg-white dark:bg-panda-black/50 border border-panda-black/10 dark:border-panda-white/10 p-5 rounded-2xl outline-none focus:border-panda-gold text-panda-black dark:text-panda-white" 
-                />
-                <input 
-                  type="text" 
-                  placeholder="Rôle / Entreprise" 
-                  value={newTestimonialRole}
-                  onChange={(e) => setNewTestimonialRole(e.target.value)}
-                  className="w-full bg-white dark:bg-panda-black/50 border border-panda-black/10 dark:border-panda-white/10 p-5 rounded-2xl outline-none focus:border-panda-gold text-panda-black dark:text-panda-white" 
-                />
-                <input 
-                  type="text" 
-                  placeholder="Projet réalisé" 
-                  value={newTestimonialProject}
-                  onChange={(e) => setNewTestimonialProject(e.target.value)}
-                  className="w-full bg-white dark:bg-panda-black/50 border border-panda-black/10 dark:border-panda-white/10 p-5 rounded-2xl outline-none focus:border-panda-gold text-panda-black dark:text-panda-white" 
-                />
+              {/* Add/Edit Testimonial Form */}
+              <div className="grid grid-cols-1 gap-4 bg-panda-black/5 dark:bg-panda-black/25 p-6 rounded-[2rem] border border-panda-black/5 dark:border-panda-white/5">
+                <span className="text-[10px] font-black uppercase tracking-widest text-panda-gold mb-2 block">
+                  {editingTestimonial ? "Formulaire d'Édition" : "Créer un Témoignage"}
+                </span>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <input 
+                    type="text" 
+                    placeholder="Nom du client *" 
+                    value={newTestimonialName}
+                    onChange={(e) => setNewTestimonialName(e.target.value)}
+                    className="w-full bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 p-4 rounded-xl outline-none focus:border-panda-gold text-panda-black dark:text-panda-white text-sm" 
+                  />
+                  <input 
+                    type="email" 
+                    placeholder="Adresse email *" 
+                    value={newTestimonialEmail}
+                    onChange={(e) => setNewTestimonialEmail(e.target.value)}
+                    className="w-full bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 p-4 rounded-xl outline-none focus:border-panda-gold text-panda-black dark:text-panda-white text-sm" 
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <input 
+                    type="text" 
+                    placeholder="Poste / Entreprise" 
+                    value={newTestimonialRole}
+                    onChange={(e) => setNewTestimonialRole(e.target.value)}
+                    className="w-full bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 p-4 rounded-xl outline-none focus:border-panda-gold text-panda-black dark:text-panda-white text-sm" 
+                  />
+                  <input 
+                    type="text" 
+                    placeholder="Projet réalisé" 
+                    value={newTestimonialProject}
+                    onChange={(e) => setNewTestimonialProject(e.target.value)}
+                    className="w-full bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 p-4 rounded-xl outline-none focus:border-panda-gold text-panda-black dark:text-panda-white text-sm" 
+                  />
+                </div>
+
                 <textarea 
-                  placeholder="Contenu du témoignage" 
+                  placeholder="Contenu du témoignage *" 
                   value={newTestimonialContent}
                   onChange={(e) => setNewTestimonialContent(e.target.value)}
-                  className="w-full bg-white dark:bg-panda-black/50 border border-panda-black/10 dark:border-panda-white/10 p-5 rounded-2xl outline-none focus:border-panda-gold h-32 text-panda-black dark:text-panda-white" 
+                  className="w-full bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 p-4 rounded-xl outline-none focus:border-panda-gold h-28 text-panda-black dark:text-panda-white text-sm resize-none" 
                 />
-                <div className="flex gap-4">
+
+                {/* Stars and Moderation Controls */}
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-white dark:bg-panda-black border border-panda-black/10 dark:border-panda-white/10 p-4 rounded-xl">
+                  <div className="flex items-center gap-3">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-panda-black/40 dark:text-panda-white/40">Évaluation :</span>
+                    <div className="flex items-center">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          type="button"
+                          key={star}
+                          onClick={() => setNewTestimonialRating(star)}
+                          className="text-panda-black/25 dark:text-panda-white/25 hover:scale-110 transition-transform p-1 cursor-pointer"
+                        >
+                          <Star
+                            size={18}
+                            className={star <= newTestimonialRating ? "fill-panda-gold text-panda-gold" : "text-panda-black/20 dark:text-panda-white/20"}
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="admin-is-approved"
+                      checked={newTestimonialIsApproved}
+                      onChange={(e) => setNewTestimonialIsApproved(e.target.checked)}
+                      className="w-4 h-4 text-panda-gold bg-panda-black border-panda-black/10 rounded focus:ring-panda-gold cursor-pointer"
+                    />
+                    <label htmlFor="admin-is-approved" className="text-[10px] font-black uppercase tracking-wider text-panda-black/60 dark:text-panda-white/60 cursor-pointer select-none">
+                      Approuvé & visible en ligne
+                    </label>
+                  </div>
+                </div>
+
+                <div className="flex gap-4 pt-2">
                   <button 
                     onClick={handleAddTestimonial}
-                    className="flex-1 bg-panda-gold text-panda-black font-bold py-5 rounded-2xl hover:bg-panda-gold/90 transition-all flex items-center justify-center gap-2"
+                    className="flex-1 bg-panda-gold hover:bg-panda-gold/90 text-panda-black font-black py-4 rounded-xl transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-widest cursor-pointer"
                   >
-                    <Plus size={20} />
+                    <Plus size={16} />
                     {editingTestimonial ? "Enregistrer les modifications" : "Ajouter le témoignage"}
                   </button>
                   {editingTestimonial && (
                     <button 
                       onClick={handleCancelEditTestimonial}
-                      className="px-8 py-5 bg-panda-black/10 dark:bg-panda-white/10 text-panda-black dark:text-panda-white font-bold rounded-2xl hover:bg-panda-black/20 dark:hover:bg-panda-white/20 transition-all"
+                      className="px-6 py-4 bg-panda-black/10 dark:bg-panda-white/10 text-panda-black dark:text-panda-white font-black rounded-xl hover:bg-panda-black/20 dark:hover:bg-panda-white/20 transition-all text-xs uppercase tracking-widest cursor-pointer"
                     >
                       Annuler
                     </button>
@@ -1097,31 +1172,107 @@ const Admin: React.FC<AdminProps> = ({
                 </div>
               </div>
 
-              {/* Testimonials List */}
-              <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-                {testimonials.map(testimonial => (
-                  <div key={testimonial.id} className="bg-white dark:bg-panda-black/30 border border-panda-black/10 dark:border-panda-white/10 p-5 rounded-2xl flex justify-between items-start gap-4">
-                    <div>
-                      <h4 className="font-bold text-panda-black dark:text-panda-white">{testimonial.name}</h4>
-                      <p className="text-sm text-panda-gold">{testimonial.role.fr}</p>
-                      <p className="text-sm text-panda-black/70 dark:text-panda-white/70 mt-2 italic">"{testimonial.content.fr}"</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <button 
-                        onClick={() => handleEditTestimonial(testimonial)}
-                        className="p-2 text-panda-gold hover:bg-panda-gold/10 rounded-xl transition-all"
-                      >
-                        <Pencil size={18} />
-                      </button>
-                      <button 
-                        onClick={() => handleDeleteTestimonial(testimonial.id)}
-                        className="p-2 text-red-500 hover:bg-red-500/10 rounded-xl transition-all"
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    </div>
-                  </div>
-                ))}
+              {/* Testimonials Moderation List */}
+              <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+                <span className="text-[10px] font-black uppercase tracking-widest text-panda-black/40 dark:text-panda-white/40 block mb-2">
+                  Liste des avis clients ({testimonials.length})
+                </span>
+                {[...testimonials]
+                  .sort((a, b) => {
+                    // Place unapproved reviews at the top of the queue
+                    const aApproved = a.is_approved !== false;
+                    const bApproved = b.is_approved !== false;
+                    if (!aApproved && bApproved) return -1;
+                    if (aApproved && !bApproved) return 1;
+                    return 0;
+                  })
+                  .map(testimonial => {
+                    const rating = testimonial.rating ?? 5;
+                    const isApproved = testimonial.is_approved !== false;
+                    return (
+                      <div key={testimonial.id} className="bg-white dark:bg-panda-black/30 border border-panda-black/10 dark:border-panda-white/10 p-5 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:border-panda-gold/50 transition-colors">
+                        <div className="space-y-2 flex-1">
+                          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                            <h4 className="font-bold text-panda-black dark:text-panda-white text-base leading-none">{testimonial.name}</h4>
+                            
+                            {/* Email Display */}
+                            {testimonial.email && (
+                              <span className="text-[10px] text-panda-black/40 dark:text-panda-white/40 font-mono">({testimonial.email})</span>
+                            )}
+
+                            {/* Status Badge */}
+                            {isApproved ? (
+                              <span className="flex items-center gap-1 text-[8px] font-bold text-panda-green bg-panda-green/10 border border-panda-green/20 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                                <CheckCircle size={10} /> Approuvé
+                              </span>
+                            ) : (
+                              <span className="flex items-center gap-1 text-[8px] font-bold text-amber-500 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                                <Clock size={10} /> En attente
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="flex flex-wrap items-center gap-3 text-xs">
+                            <span className="text-panda-gold font-semibold">{testimonial.role[lang] || testimonial.role.fr}</span>
+                            {testimonial.project?.[lang] && (
+                              <span className="text-panda-black/40 dark:text-panda-white/40">• {testimonial.project[lang]}</span>
+                            )}
+                          </div>
+
+                          {/* Render Rating Stars */}
+                          <div className="flex items-center space-x-1 py-1">
+                            {[...Array(5)].map((_, i) => (
+                              <Star 
+                                key={i} 
+                                size={12} 
+                                className={i < rating ? "fill-panda-gold text-panda-gold" : "text-panda-black/20 dark:text-panda-white/20"} 
+                              />
+                            ))}
+                          </div>
+
+                          <p className="text-xs text-panda-black/70 dark:text-panda-white/70 italic leading-relaxed">
+                            "{testimonial.content[lang] || testimonial.content.fr}"
+                          </p>
+                        </div>
+
+                        {/* Moderation Actions */}
+                        <div className="flex items-center gap-2 self-end md:self-center">
+                          {!isApproved && (
+                            <button
+                              onClick={() => onUpdateTestimonial({ ...testimonial, is_approved: true })}
+                              className="px-3.5 py-2 bg-panda-green/10 hover:bg-panda-green border border-panda-green/30 text-panda-green hover:text-white font-bold text-[9px] uppercase tracking-widest rounded-lg transition-all cursor-pointer"
+                              title="Approuver l'avis pour affichage public"
+                            >
+                              Approuver
+                            </button>
+                          )}
+                          {isApproved && testimonial.email && (
+                            <button
+                              onClick={() => onUpdateTestimonial({ ...testimonial, is_approved: false })}
+                              className="px-3.5 py-2 bg-amber-500/10 hover:bg-amber-500 border border-amber-500/30 text-amber-500 hover:text-panda-black font-bold text-[9px] uppercase tracking-widest rounded-lg transition-all cursor-pointer"
+                              title="Désapprouver (retirer du site)"
+                            >
+                              Masquer
+                            </button>
+                          )}
+                          <button 
+                            onClick={() => handleEditTestimonial(testimonial)}
+                            className="p-2.5 text-panda-gold hover:bg-panda-gold/10 rounded-lg border border-transparent hover:border-panda-gold/20 transition-all cursor-pointer"
+                            title="Modifier"
+                          >
+                            <Pencil size={14} />
+                          </button>
+                          <button 
+                            onClick={() => handleDeleteTestimonial(testimonial.id)}
+                            className="p-2.5 text-red-500 hover:bg-red-500/10 rounded-lg border border-transparent hover:border-red-500/20 transition-all cursor-pointer"
+                            title="Supprimer définitivement"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
               </div>
             </div>
           </div>

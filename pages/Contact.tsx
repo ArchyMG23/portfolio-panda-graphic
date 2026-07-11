@@ -192,7 +192,7 @@ const Contact: React.FC<ContactProps> = ({ lang, onAddAppointment, appointments,
             <div className="p-8 bg-panda-black/5 dark:bg-panda-white/5 border border-panda-black/10 dark:border-panda-white/10 rounded-3xl group hover:border-panda-gold transition-all">
               <MapPin className="text-panda-gold mb-4 group-hover:scale-110 transition-transform" />
               <h4 className="text-xs font-black uppercase tracking-widest text-panda-black/60 dark:text-panda-white/40 mb-2">{t.booking.studio}</h4>
-              <p className="text-sm font-medium text-panda-black dark:text-panda-white">Cameroun / Remote</p>
+              <p className="text-sm font-medium text-panda-black dark:text-panda-white">Paris / Remote</p>
             </div>
             <div className="p-8 bg-panda-black/5 dark:bg-panda-white/5 border border-panda-black/10 dark:border-panda-white/10 rounded-3xl group hover:border-panda-gold transition-all">
               <Phone className="text-panda-gold mb-4 group-hover:scale-110 transition-transform" />

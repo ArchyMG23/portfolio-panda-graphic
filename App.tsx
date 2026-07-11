@@ -136,9 +136,9 @@ const App: React.FC = () => {
         setAppointments(apptList);
         setSettings(settObj);
 
-        // Preload the project images in the background to avoid slow image loading flicker, without blocking the app launch
+        // Preload the project images to avoid slow image loading flicker after the loader fades out
         const imagesToPreload = finalProjects.slice(0, 6).map(p => p.image);
-        Promise.all(imagesToPreload.map(url => {
+        await Promise.all(imagesToPreload.map(url => {
           if (!url || url.endsWith('.mp4') || url.endsWith('.webm')) {
             return Promise.resolve();
           }
@@ -148,7 +148,7 @@ const App: React.FC = () => {
             img.onload = () => resolve();
             img.onerror = () => resolve();
           });
-        })).catch(err => console.warn("Preload in background failed:", err));
+        }));
       } catch (error) {
         console.error("Error loading data from Firestore, falling back to static constants:", error);
         setProjects(INITIAL_PROJECTS);
@@ -598,7 +598,7 @@ const App: React.FC = () => {
 
         <main className="min-h-screen">
           <Routes>
-            <Route path="/" element={<Home lang={lang} projects={projects} posts={posts} testimonials={testimonials} settings={settings} />} />
+            <Route path="/" element={<Home lang={lang} projects={projects} posts={posts} testimonials={testimonials} settings={settings} onAddTestimonial={addTestimonial} />} />
             <Route path="/portfolio" element={<Portfolio lang={lang} projects={projects} />} />
             <Route path="/services" element={<Services lang={lang} settings={settings} />} />
             <Route path="/about" element={<About lang={lang} settings={settings} />} />

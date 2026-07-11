@@ -1,8 +1,9 @@
-import { ArrowRight, Box, Palette, Layout, Megaphone, Quote, BookOpen, User, Mail, Sparkles, Zap, Film, Star } from 'lucide-react';
-import React from 'react';
+import { ArrowRight, Box, Palette, Layout, Megaphone, Quote, BookOpen, User, Mail, Sparkles, Zap, Film, Star, MessageSquarePlus } from 'lucide-react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Language, Project, BlogPost, ProjectCategory, Testimonial, AppSettings } from '../types';
 import { TRANSLATIONS } from '../constants';
+import { TestimonialForm } from '../components/TestimonialForm';
 
 interface HomeProps {
   lang: Language;
@@ -10,11 +11,13 @@ interface HomeProps {
   posts: BlogPost[];
   testimonials: Testimonial[];
   settings?: AppSettings;
+  onAddTestimonial?: (t: Testimonial) => void;
 }
 
-const Home: React.FC<HomeProps> = ({ lang, projects, posts, testimonials, settings }) => {
+const Home: React.FC<HomeProps> = ({ lang, projects, posts, testimonials, settings, onAddTestimonial }) => {
   const t = TRANSLATIONS[lang];
   const navigate = useNavigate();
+  const [isTestimonialFormOpen, setIsTestimonialFormOpen] = useState(false);
 
   const recentProjects = [...projects].reverse().slice(0, 3);
   const recentPosts = [...posts].reverse().slice(0, 2);
@@ -285,36 +288,67 @@ const Home: React.FC<HomeProps> = ({ lang, projects, posts, testimonials, settin
       </section>
 
       {/* Testimonials Section - Social Proof */}
-      <section className="max-w-7xl mx-auto px-6 reveal">
+      <section className="max-w-7xl mx-auto px-6 reveal" id="testimonials-section">
         <div className="text-center mb-12 sm:mb-20">
           <span className="text-panda-gold font-display text-xs tracking-[0.6em] uppercase mb-4 sm:mb-6 block">{homeTestimonialsTag}</span>
           <h2 className="text-3xl sm:text-5xl md:text-7xl font-display uppercase tracking-tighter leading-none">{homeTestimonialsTitle}</h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-10">
-          {testimonials.map((testimonial) => (
-            <div key={testimonial.id} className="bg-panda-black/5 dark:bg-panda-white/5 border border-panda-black/10 dark:border-panda-white/10 p-6 sm:p-12 rounded-[1.5rem] sm:rounded-[3rem] relative group hover:border-panda-gold transition-all duration-500">
-              <Quote className="absolute top-10 right-10 text-panda-gold/20 group-hover:text-panda-gold/40 transition-colors" size={60} />
-              <div className="flex items-center space-x-4 mb-8">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={14} className="fill-panda-gold text-panda-gold" />
-                ))}
-              </div>
-              <p className="text-xl md:text-2xl font-light italic leading-relaxed mb-10 text-panda-black/80 dark:text-panda-white/80">
-                "{testimonial.content[lang]}"
-              </p>
-              <div className="flex items-center space-x-4">
-                <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-panda-gold/30">
-                  <img src={testimonial.avatar} alt={testimonial.name} className="w-full h-full object-cover" />
+          {testimonials.filter(t => t.is_approved !== false).map((testimonial) => {
+            const rating = testimonial.rating ?? 5;
+            return (
+              <div key={testimonial.id} className="bg-panda-black/5 dark:bg-panda-white/5 border border-panda-black/10 dark:border-panda-white/10 p-6 sm:p-12 rounded-[1.5rem] sm:rounded-[3rem] relative group hover:border-panda-gold transition-all duration-500">
+                <Quote className="absolute top-10 right-10 text-panda-gold/20 group-hover:text-panda-gold/40 transition-colors" size={60} />
+                <div className="flex items-center space-x-1.5 mb-8">
+                  {[...Array(5)].map((_, i) => (
+                    <Star 
+                      key={i} 
+                      size={14} 
+                      className={i < rating ? "fill-panda-gold text-panda-gold" : "text-panda-black/20 dark:text-panda-white/20"} 
+                    />
+                  ))}
                 </div>
-                <div>
-                  <h4 className="font-display text-lg uppercase tracking-tight">{testimonial.name}</h4>
-                  <p className="text-panda-gold text-xs font-bold uppercase tracking-widest">{testimonial.role[lang]}</p>
+                <p className="text-xl md:text-2xl font-light italic leading-relaxed mb-10 text-panda-black/80 dark:text-panda-white/80">
+                  "{testimonial.content[lang] || testimonial.content.fr}"
+                </p>
+                <div className="flex items-center space-x-4">
+                  <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-panda-gold/30">
+                    <img src={testimonial.avatar} alt={testimonial.name} className="w-full h-full object-cover" />
+                  </div>
+                  <div>
+                    <h4 className="font-display text-lg uppercase tracking-tight">{testimonial.name}</h4>
+                    <p className="text-panda-gold text-xs font-bold uppercase tracking-widest">{testimonial.role[lang] || testimonial.role.fr}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
+
+        {/* Leave a Review Dynamic CTA */}
+        <div className="flex justify-center mt-12 sm:mt-16">
+          <button
+            onClick={() => setIsTestimonialFormOpen(true)}
+            className="px-10 py-5 bg-transparent border border-panda-gold hover:bg-panda-gold hover:text-panda-black text-panda-gold font-black uppercase tracking-[0.25em] rounded-2xl transition-all duration-300 flex items-center gap-3 shadow-xl hover:shadow-panda-gold/10 text-xs sm:text-sm cursor-pointer"
+            id="open-testimonial-form-btn"
+          >
+            <MessageSquarePlus size={18} />
+            <span>{lang === 'fr' ? 'Laisser un avis' : lang === 'de' ? 'Bewertung hinterlassen' : 'Leave a review'}</span>
+          </button>
+        </div>
+
+        {/* Testimonial Submission Form Modal */}
+        {onAddTestimonial && (
+          <TestimonialForm
+            lang={lang}
+            isOpen={isTestimonialFormOpen}
+            onClose={() => setIsTestimonialFormOpen(false)}
+            onSubmit={async (newTestimonial: Testimonial) => {
+              onAddTestimonial(newTestimonial);
+            }}
+          />
+        )}
       </section>
 
       {/* Final Contact CTA - The Closing Deal */}

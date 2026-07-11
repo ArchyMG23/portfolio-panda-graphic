@@ -36,6 +36,12 @@ export interface Testimonial {
   content: { fr: string; en: string; de: string };
   project?: { fr: string; en: string; de: string };
   avatar?: string;
+  // New dynamic fields for client self-submission and moderation
+  email?: string;
+  company?: string;
+  rating?: number;
+  is_approved?: boolean;
+  created_at?: string;
 }
 
 export interface BlogComment {
