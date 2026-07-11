@@ -452,7 +452,10 @@ const App: React.FC = () => {
                 transition={{ delay: 0.2, duration: 0.8 }}
                 className="mt-8 flex flex-col items-center px-4 max-w-full"
               >
-                <h2 className="font-display text-lg sm:text-2xl font-bold tracking-[0.15em] sm:tracking-[0.3em] uppercase text-panda-white whitespace-nowrap">
+                <h2 
+                  className="font-display text-base sm:text-2xl font-bold tracking-[0.15em] sm:tracking-[0.3em] uppercase text-panda-white whitespace-nowrap break-normal select-none"
+                  style={{ wordBreak: 'normal', whiteSpace: 'nowrap' }}
+                >
                   PANDA<span className="text-panda-gold">_</span>GRAPHIC
                 </h2>
                 <div className="mt-4 w-32 h-[1px] bg-panda-white/10 relative overflow-hidden">
